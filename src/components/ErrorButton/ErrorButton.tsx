@@ -4,7 +4,7 @@ interface State {
   shouldThrowError: boolean;
 }
 
-class ErrorButton extends Component<unknown, State> {
+class ErrorButton extends Component<Record<string, never>, State> {
   state: State = {
     shouldThrowError: false,
   };
