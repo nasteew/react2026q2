@@ -1,11 +1,11 @@
 import { Component } from 'react';
 import type { Item } from './types/item';
-import { fetchPokemon, fetchPokemonList } from './api/api';
+import { pokemonService } from './api/pokemonService';
+import { storage } from './utils/storage';
 import Search from './components/Search/Search';
 import Loader from './components/Loader/Loader';
 import CardList from './components/CardList/CardList';
 import ErrorButton from './components/ErrorButton/ErrorButton';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 interface State {
   searchTerm: string;
@@ -25,85 +25,93 @@ class App extends Component<Record<string, never>, State> {
   };
 
   componentDidMount(): void {
-    const saved = localStorage.getItem('searchTerm') || '';
-    this.setState({ searchTerm: saved });
+    const saved = storage.getSearch();
+    this.setState({ searchTerm: saved }, () => {
+      if (saved) this.loadSearch(saved);
+      else this.loadPage(1);
+    });
+  }
 
-    if (saved) {
-      this.loadSearch(saved);
-    } else {
-      this.loadPage(1);
+  private setLoading = (loading: boolean) => this.setState({ loading });
+
+  private setResults = (results: Item[]) =>
+    this.setState({ results, error: null });
+
+  private setError = (message: string) =>
+    this.setState({ error: message, results: [] });
+
+  private async fetchAndHandle<T>(
+    request: () => Promise<T>,
+    onSuccess: (data: T) => void
+  ): Promise<void> {
+    this.setLoading(true);
+    try {
+      const data = await request();
+      onSuccess(data);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      this.setError(message);
+    } finally {
+      this.setLoading(false);
     }
   }
 
   handleSearch = async (value: string) => {
     const trimmed = value.trim();
 
-    if (trimmed === this.state.searchTerm) return;
+    if (trimmed === this.state.searchTerm.trim()) return;
 
-    this.setState({ loading: true, searchTerm: trimmed, page: 1 });
+    this.setState({ searchTerm: trimmed, page: 1, error: null });
 
-    localStorage.setItem('searchTerm', trimmed);
+    storage.setSearch(trimmed);
 
-    try {
-      if (trimmed) {
-        const result = await fetchPokemon(trimmed);
-        this.setState({ results: [result], error: null });
-      } else {
-        const list = await fetchPokemonList(1);
-        this.setState({ results: list, error: null });
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.setState({ error: err.message, results: [] });
-      }
-    } finally {
-      this.setState({ loading: false });
+    if (trimmed) {
+      await this.fetchAndHandle(
+        () => pokemonService.getByName(trimmed),
+        (item: Item) => this.setResults([item])
+      );
+    } else {
+      await this.fetchAndHandle(
+        () => pokemonService.getPage(1),
+        (list: Item[]) => this.setResults(list)
+      );
     }
   };
 
   loadPage = async (page: number) => {
-    this.setState({ loading: true, page });
-
-    try {
-      const list = await fetchPokemonList(page);
-      this.setState({ results: list, error: null });
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.setState({ error: err.message, results: [] });
-      }
-    } finally {
-      this.setState({ loading: false });
-    }
+    this.setState({ page, error: null });
+    await this.fetchAndHandle(
+      () => pokemonService.getPage(page),
+      (list: Item[]) => this.setResults(list)
+    );
   };
 
   loadSearch = async (term: string) => {
-    this.setState({ loading: true });
-
-    try {
-      const item = await fetchPokemon(term);
-      this.setState({ results: [item], error: null });
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        this.setState({ error: err.message, results: [] });
-      }
-    } finally {
-      this.setState({ loading: false });
-    }
+    await this.fetchAndHandle(
+      () => pokemonService.getByName(term),
+      (item: Item) => this.setResults([item])
+    );
   };
 
   render() {
     const { searchTerm, results, loading, error } = this.state;
     return (
-      <div className="p-6">
-        <Search value={searchTerm} onSearch={this.handleSearch} />
-        {loading && <Loader />}
-        {error && <div className="text-red-500 text-lg my-4">{error}</div>}
-        <ErrorBoundary>
+      <div className="min-h-screen bg-gray-100">
+        <header className="bg-white shadow-sm">
+          <Search value={searchTerm} onSearch={this.handleSearch} />
+        </header>
+
+        <main className="max-w-4xl mx-auto p-4 space-y-6">
+          <div className="max-w-4xl mx-auto">
+            <ErrorButton />
+          </div>
+
+          {loading && <Loader />}
+
+          {error && <div className="text-red-500 text-lg">{error}</div>}
+
           {!loading && !error && <CardList items={results} />}
-        </ErrorBoundary>
-        <div className="mt-6">
-          <ErrorButton />
-        </div>
+        </main>
       </div>
     );
   }
