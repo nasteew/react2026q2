@@ -2,7 +2,7 @@ import { BASE_URL } from '@/constants/api';
 import type { Item } from '@/types/item';
 
 export async function fetchPokemonList(page: number): Promise<Item[]> {
-  const limit = 20;
+  const limit = 9;
   const offset = (page - 1) * limit;
 
   const response = await fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`);
