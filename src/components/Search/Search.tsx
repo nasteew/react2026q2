@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import type { ChangeEvent } from 'react';
 import Pokeball from '../ui/icons/Pokeball';
+import Button from '../ui/Button/Button';
 interface Props {
   value: string;
   onSearch: (value: string) => void;
@@ -29,7 +30,8 @@ class Search extends Component<Props, State> {
     this.setState({ inputValue: e.target.value });
   };
 
-  handleSubmit = () => {
+  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     this.props.onSearch(this.state.inputValue);
   };
 
@@ -50,18 +52,17 @@ class Search extends Component<Props, State> {
             type="text"
             value={this.state.inputValue}
             onChange={this.handleChange}
-            className="w-full border-2 border-black rounded-md px-3 py-2 pl-12 bg-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition"
+            className="w-full border-2 border-black rounded-md px-3 py-2 pl-12 bg-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white transition"
             placeholder="Enter Pokémon name..."
             aria-label="Enter Pokémon name"
           />
         </div>
 
-        <button
-          type="submit"
-          className="px-4 py-2 rounded-md text-sm font-medium transition bg-red-500 hover:bg-red-600 text-white cursor-pointer"
-        >
-          Search
-        </button>
+        <Button
+          onClick={() => this.props.onSearch(this.state.inputValue)}
+          label="Search"
+          className="bg-red-700 to-yellow-400 focus:ring-white"
+        />
       </form>
     );
   }

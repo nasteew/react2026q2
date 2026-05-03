@@ -1,5 +1,6 @@
 import { Component, type ReactNode, type ErrorInfo } from 'react';
 import Pokeball from '../ui/icons/Pokeball';
+import Button from '../ui/Button/Button';
 
 interface Props {
   children: ReactNode;
@@ -33,7 +34,7 @@ class ErrorBoundary extends Component<Props, State> {
           <div
             role="alert"
             aria-live="polite"
-            className="flex items-center gap-4 p-4 rounded-2xl border border-red-100
+            className="flex items-center gap-4 p-4 rounded-2xl border-3 border-red-200
                        bg-gradient-to-br from-red-50 to-white text-red-700 shadow-sm
                        max-w-md w-full"
           >
@@ -48,13 +49,12 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <div className="ml-auto flex items-center gap-2">
-              <button
-                type="button"
+              <Button
                 onClick={this.handleRetry}
-                className="cursor-pointer px-3 py-1 rounded-md text-sm font-medium bg-red-500 hover:bg-red-600 text-white transition"
-              >
-                Retry
-              </button>
+                label="Retry"
+                ariaLabel="Simulate error"
+                className="bg-red-500 focus:ring-red-300"
+              ></Button>
             </div>
           </div>
         </div>

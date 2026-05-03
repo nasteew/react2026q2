@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Button from '../ui/Button/Button';
 
 interface State {
   shouldThrowError: boolean;
@@ -19,12 +20,12 @@ class ErrorButton extends Component<Record<string, never>, State> {
     }
 
     return (
-      <button
+      <Button
         onClick={this.handleClick}
-        className="px-5 py-2 bg-red-600 text-white font-bold rounded-lg border-2 border-black shadow-md hover:bg-red-700 hover:shadow-lg transition active:scale-95"
-      >
-        Error Button
-      </button>
+        label="Trigger Error"
+        ariaLabel="Simulate error"
+        className="bg-red-700 focus:ring-red-300"
+      />
     );
   }
 }
