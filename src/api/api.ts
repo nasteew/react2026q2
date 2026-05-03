@@ -8,7 +8,9 @@ export async function fetchPokemonList(page: number): Promise<Item[]> {
   const response = await fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`);
 
   if (!response.ok) {
-    throw new Error('Failed to fetch Pokémon list');
+    if (response.status >= 500)
+      throw new Error('Server error. Please try again later.');
+    throw new Error(`Failed to fetch Pokémon list (${response.status})`);
   }
 
   const data = await response.json();
@@ -24,7 +26,11 @@ export async function fetchPokemon(name: string): Promise<Item> {
   const response = await fetch(`${BASE_URL}/${name.toLowerCase()}`);
 
   if (!response.ok) {
-    throw new Error('Pokémon not found');
+    if (response.status === 404)
+      throw new Error(`Pokémon "${name}" not found. Try a different name!`);
+    if (response.status >= 500)
+      throw new Error('Server error. Please try again later.');
+    throw new Error(`Request failed with status ${response.status}`);
   }
 
   const data = await response.json();

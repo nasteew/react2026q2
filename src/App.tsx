@@ -97,7 +97,7 @@ class App extends Component<Record<string, never>, State> {
     const { searchTerm, results, loading, error } = this.state;
     return (
       <div className="min-h-screen bg-gray-100">
-        <header className="bg-white shadow-sm">
+        <header className="bg-red-500 shadow-lg">
           <Search value={searchTerm} onSearch={this.handleSearch} />
         </header>
 
@@ -108,7 +108,11 @@ class App extends Component<Record<string, never>, State> {
 
           {loading && <Loader />}
 
-          {error && <div className="text-red-500 text-lg">{error}</div>}
+          {error && (
+            <div className="flex flex-col items-center justify-center p-8 bg-white rounded-xl border-3 border-red-500 text-center">
+              <p className="text-red-700 font-medium">{error}</p>
+            </div>
+          )}
 
           {!loading && !error && <CardList items={results} />}
         </main>
