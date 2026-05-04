@@ -1,7 +1,7 @@
 export interface Item {
   name: string;
   image: string;
-  type: string;
+  types: string[];
   height: number;
   weight: number;
 }

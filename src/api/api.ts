@@ -1,5 +1,6 @@
 import { BASE_URL } from '@/constants/api';
 import type { Item } from '@/types/item';
+import type { PokemonTypeEntry } from '@/types/pokemonType';
 
 export async function fetchPokemonList(page: number): Promise<Item[]> {
   const limit = 9;
@@ -38,7 +39,7 @@ export async function fetchPokemon(name: string): Promise<Item> {
   return {
     name: data.name,
     image: data.sprites.other['official-artwork'].front_default,
-    type: data.types[0].type.name,
+    types: data.types.map((t: PokemonTypeEntry) => t.type.name),
     height: data.height,
     weight: data.weight,
   };
