@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, SubmitEventHandler } from 'react';
 import Pokeball from '../ui/icons/Pokeball';
 import Button from '../ui/Button/Button';
 interface Props {
@@ -30,7 +30,7 @@ class Search extends Component<Props, State> {
     this.setState({ inputValue: e.target.value });
   };
 
-  handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  handleSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     this.props.onSearch(this.state.inputValue);
   };

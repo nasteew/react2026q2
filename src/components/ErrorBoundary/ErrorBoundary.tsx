@@ -52,7 +52,7 @@ class ErrorBoundary extends Component<Props, State> {
               <Button
                 onClick={this.handleRetry}
                 label="Retry"
-                ariaLabel="Simulate error"
+                ariaLabel="Retry"
                 className="bg-red-500 focus:ring-red-300"
               ></Button>
             </div>
