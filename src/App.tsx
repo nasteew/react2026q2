@@ -102,10 +102,6 @@ class App extends Component<Record<string, never>, State> {
         </header>
 
         <main className="max-w-4xl mx-auto p-4 space-y-6">
-          <div className="max-w-4xl mx-auto">
-            <ErrorButton />
-          </div>
-
           {loading && <Loader />}
 
           {error && (
@@ -116,6 +112,9 @@ class App extends Component<Record<string, never>, State> {
 
           {!loading && !error && <CardList items={results} />}
         </main>
+        <div className="max-w-4xl mx-auto flex justify-end p-4">
+          <ErrorButton />
+        </div>
       </div>
     );
   }
