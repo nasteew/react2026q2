@@ -11,7 +11,7 @@ export async function fetchPokemonList(page: number): Promise<Item[]> {
   if (!response.ok) {
     if (response.status >= 500)
       throw new Error('Server error. Please try again later.');
-    throw new Error(`Failed to fetch Pokémon list (${response.status})`);
+    throw new Error(`Failed to get Pokémon list (${response.status})`);
   }
 
   const data = await response.json();
