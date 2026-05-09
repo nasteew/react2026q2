@@ -2,7 +2,7 @@ import { suppressConsoleError } from '@/test-utils/suppressConsoleError';
 import ErrorBoundary from './ErrorBoundary';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import { ThrowError } from '@/test-utils/throw-error';
+import { ThrowError } from '@/test-utils/throwError';
 
 suppressConsoleError();
 
