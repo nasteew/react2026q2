@@ -29,4 +29,21 @@ describe('Card', () => {
     render(<Card item={{ ...mockItem, types: [] }} />);
     expect(screen.getByText('bulbasaur')).toBeInTheDocument();
   });
+
+  it('renders with single type', () => {
+    render(<Card item={{ ...mockItem, types: ['fire'] }} />);
+    expect(screen.getAllByText('fire', { exact: false })).toHaveLength(2);
+  });
+
+  it('renders badge with default style for unknown type', () => {
+    render(<Card item={{ ...mockItem, types: ['unknown_type'] }} />);
+    expect(screen.getAllByText('unknown_type', { exact: false })).toHaveLength(
+      2
+    );
+  });
+
+  it('uses default style for unknown secondary type', () => {
+    render(<Card item={{ ...mockItem, types: ['fire', 'unknown'] }} />);
+    expect(screen.getByText('bulbasaur')).toBeInTheDocument();
+  });
 });
