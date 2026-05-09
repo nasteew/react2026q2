@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { server } from './__tests__/test-utils/server';
+import { server } from './test-utils/msw/server';
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
