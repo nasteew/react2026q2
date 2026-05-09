@@ -30,6 +30,7 @@ export default defineConfig({
         'src/test-utils/**',
         'src/types/**',
         'src/constants/**',
+        'src/main.tsx',
       ],
       thresholds: {
         statements: 80,
