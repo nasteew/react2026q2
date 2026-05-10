@@ -167,6 +167,60 @@ describe('App', () => {
 
       expect(mockedPokemonService.getByName).toHaveBeenCalledTimes(1);
     });
+
+    it('trims whitespace from search term', async () => {
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.type(
+        screen.getByLabelText('Enter Pokémon name'),
+        '  pikachu  '
+      );
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      expect(mockedStorage.setSearch).toHaveBeenCalledWith('pikachu');
+      expect(mockedPokemonService.getByName).toHaveBeenCalledWith('pikachu');
+    });
+
+    it('handles 404 error response', async () => {
+      mockedPokemonService.getByName.mockRejectedValue(
+        new Error('Pokémon "unknown" not found. Try a different name!')
+      );
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.type(screen.getByLabelText('Enter Pokémon name'), 'unknown');
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Pokémon "unknown" not found. Try a different name!')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('handles 500 error response', async () => {
+      mockedPokemonService.getByName.mockRejectedValue(
+        new Error('Server error. Please try again later.')
+      );
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.type(screen.getByLabelText('Enter Pokémon name'), 'pikachu');
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Server error. Please try again later.')
+        ).toBeInTheDocument();
+      });
+    });
   });
 
   describe('localStorage', () => {
