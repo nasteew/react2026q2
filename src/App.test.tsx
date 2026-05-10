@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import App from './App';
 import { pokemonService } from './api/pokemonService';
 import { storage } from './utils/storage';
@@ -100,6 +101,113 @@ describe('App', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Unknown error')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Search interactions', () => {
+    it('saves search term to localStorage on search', async () => {
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.clear(screen.getByLabelText('Enter Pokémon name'));
+      await user.type(
+        screen.getByLabelText('Enter Pokémon name'),
+        'charmander'
+      );
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      expect(mockedStorage.setSearch).toHaveBeenCalledWith('charmander');
+    });
+
+    it('calls getByName with search term', async () => {
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.clear(screen.getByLabelText('Enter Pokémon name'));
+      await user.type(
+        screen.getByLabelText('Enter Pokémon name'),
+        'charmander'
+      );
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      await waitFor(() => {
+        expect(mockedPokemonService.getByName).toHaveBeenCalledWith(
+          'charmander'
+        );
+      });
+    });
+    it('loads page when search is cleared', async () => {
+      mockedStorage.getSearch.mockReturnValue('pikachu');
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.clear(screen.getByLabelText('Enter Pokémon name'));
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      await waitFor(() => {
+        expect(mockedPokemonService.getPage).toHaveBeenCalledWith(1);
+      });
+    });
+
+    it('does not search again with same term', async () => {
+      mockedStorage.getSearch.mockReturnValue('pikachu');
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      expect(mockedPokemonService.getByName).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('localStorage', () => {
+    it('reads search term from localStorage on mount', () => {
+      mockedStorage.getSearch.mockReturnValue('bulbasaur');
+      render(<App />);
+      expect(mockedStorage.getSearch).toHaveBeenCalled();
+    });
+
+    it('writes to localStorage when new search performed', async () => {
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.type(screen.getByLabelText('Enter Pokémon name'), 'squirtle');
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      expect(mockedStorage.setSearch).toHaveBeenCalledWith('squirtle');
+    });
+
+    it('overwrites existing localStorage value on new search', async () => {
+      mockedStorage.getSearch.mockReturnValue('pikachu');
+      const user = userEvent.setup();
+      render(<App />);
+
+      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      await user.clear(screen.getByLabelText('Enter Pokémon name'));
+      await user.type(screen.getByLabelText('Enter Pokémon name'), 'squirtle');
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+
+      expect(mockedStorage.setSearch).toHaveBeenCalledWith('squirtle');
+    });
+
+    it('shows empty input when localStorage is empty', async () => {
+      mockedStorage.getSearch.mockReturnValue('');
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Enter Pokémon name')).toHaveValue('');
       });
     });
   });
