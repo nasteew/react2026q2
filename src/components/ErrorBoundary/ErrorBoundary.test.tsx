@@ -6,6 +6,19 @@ import { ThrowError } from '@/test-utils/throwError';
 
 suppressConsoleError();
 
+const reloadMock = vi.fn();
+
+beforeEach(() => {
+  Object.defineProperty(window, 'location', {
+    value: { reload: reloadMock },
+    writable: true,
+  });
+});
+
+afterEach(() => {
+  reloadMock.mockClear();
+});
+
 describe('ErrorBoundary', () => {
   it('renders children when no error', () => {
     render(
@@ -40,11 +53,6 @@ describe('ErrorBoundary', () => {
 
   it('reloads page on retry click', async () => {
     const user = userEvent.setup();
-    const reloadMock = vi.fn();
-    Object.defineProperty(window, 'location', {
-      value: { reload: reloadMock },
-      writable: true,
-    });
 
     render(
       <ErrorBoundary>
