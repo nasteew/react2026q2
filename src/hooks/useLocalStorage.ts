@@ -2,7 +2,9 @@ import { useState } from 'react';
 
 const SEARCH_KEY = 'searchTerm';
 
-function useLocalStorage() {
+type UseLocalStorageReturn = [string, (value: string) => void, () => void];
+
+function useLocalStorage(): UseLocalStorageReturn {
   const [searchTerm, setSearchTerm] = useState(
     () => localStorage.getItem(SEARCH_KEY) ?? ''
   );
