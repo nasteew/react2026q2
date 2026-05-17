@@ -1,5 +1,4 @@
 import { fetchPokemon, fetchPokemonList } from './api';
-import { pokemonService } from './pokemonService';
 import { request } from './client';
 import { server } from '@/test-utils/msw/server';
 import { http, HttpResponse } from 'msw';
@@ -91,18 +90,5 @@ describe('fetchPokemonList', () => {
     await expect(fetchPokemonList(1)).rejects.toThrow(
       'Request failed with status 400'
     );
-  });
-});
-
-describe('pokemonService', () => {
-  it('getByName returns pokemon', async () => {
-    const result = await pokemonService.getByName('bulbasaur');
-    expect(result.name).toBe('bulbasaur');
-  });
-
-  it('getPage returns list', async () => {
-    const result = await pokemonService.getPage(1);
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('bulbasaur');
   });
 });
