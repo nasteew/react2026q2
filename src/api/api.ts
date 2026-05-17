@@ -36,6 +36,13 @@ export async function fetchPokemon(name: string): Promise<Item> {
 
       height: data.height,
       weight: data.weight,
+      abilities: data.abilities.map((a) => a.ability.name),
+      stats: data.stats.map((s) => ({
+        name: s.stat.name,
+        value: s.base_stat,
+      })),
+      baseExperience: data.base_experience,
+      moves: data.moves.map((m) => m.move.name),
     };
   } catch (error) {
     if (
