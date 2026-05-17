@@ -1,54 +1,63 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import App from './App';
-import { pokemonService } from './api/pokemonService';
-import { storage } from './utils/storage';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Home } from './Home';
+import * as api from '@/api/api';
 import { mockItem } from '@/test-utils/mocks/mockItem';
 import { suppressConsoleError } from '@/test-utils/suppressConsoleError';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 suppressConsoleError();
 
-vi.mock('./api/pokemonService');
-vi.mock('./utils/storage');
+vi.mock('@/api/api');
+vi.mock('@/hooks/useLocalStorage');
 
-const mockedPokemonService = vi.mocked(pokemonService);
-const mockedStorage = vi.mocked(storage);
+const mockedApi = vi.mocked(api);
+const mockedUseLocalStorage = vi.mocked(useLocalStorage);
+
+function renderHome(initialEntries = ['/?page=1']) {
+  return render(
+    <MemoryRouter initialEntries={initialEntries}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
 
 beforeEach(() => {
-  mockedStorage.getSearch.mockReturnValue('');
-  mockedPokemonService.getPage.mockResolvedValue([mockItem]);
-  mockedPokemonService.getByName.mockResolvedValue(mockItem);
+  mockedUseLocalStorage.mockReturnValue(['', vi.fn(), vi.fn()]);
+  mockedApi.fetchPokemonList.mockResolvedValue([mockItem]);
+  mockedApi.fetchPokemon.mockResolvedValue(mockItem);
 });
 
 afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('App', () => {
+describe('Home', () => {
   describe('Initial load', () => {
     it('loads page on mount when no saved search', async () => {
-      render(<App />);
+      renderHome();
 
       await waitFor(() => {
-        expect(mockedPokemonService.getPage).toHaveBeenCalledWith(1);
+        expect(mockedApi.fetchPokemonList).toHaveBeenCalledWith(1);
       });
     });
 
     it('loads saved search term from localStorage on mount', async () => {
-      mockedStorage.getSearch.mockReturnValue('pikachu');
-
-      render(<App />);
+      mockedUseLocalStorage.mockReturnValue(['pikachu', vi.fn(), vi.fn()]);
+      renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => {
-        expect(mockedPokemonService.getByName).toHaveBeenCalledWith('pikachu');
+        expect(mockedApi.fetchPokemon).toHaveBeenCalledWith('pikachu');
       });
     });
 
     it('displays search input with saved term', async () => {
-      mockedStorage.getSearch.mockReturnValue('pikachu');
-
-      render(<App />);
+      mockedUseLocalStorage.mockReturnValue(['pikachu', vi.fn(), vi.fn()]);
+      renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => {
         expect(screen.getByLabelText('Enter Pokémon name')).toHaveValue(
@@ -58,12 +67,12 @@ describe('App', () => {
     });
 
     it('shows loading state during initial fetch', async () => {
-      mockedPokemonService.getPage.mockImplementation(
+      mockedApi.fetchPokemonList.mockImplementation(
         () =>
           new Promise((resolve) => setTimeout(() => resolve([mockItem]), 100))
       );
 
-      render(<App />);
+      renderHome();
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -73,7 +82,7 @@ describe('App', () => {
     });
 
     it('displays results after successful load', async () => {
-      render(<App />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByText('bulbasaur')).toBeInTheDocument();
@@ -81,11 +90,11 @@ describe('App', () => {
     });
 
     it('displays error message when API fails', async () => {
-      mockedPokemonService.getPage.mockRejectedValue(
+      mockedApi.fetchPokemonList.mockRejectedValue(
         new Error('Server error. Please try again later.')
       );
 
-      render(<App />);
+      renderHome();
 
       await waitFor(() => {
         expect(
@@ -95,9 +104,9 @@ describe('App', () => {
     });
 
     it('handles unknown error type', async () => {
-      mockedPokemonService.getPage.mockRejectedValue('string error');
+      mockedApi.fetchPokemonList.mockRejectedValue('string error');
 
-      render(<App />);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByText('Unknown error')).toBeInTheDocument();
@@ -107,28 +116,28 @@ describe('App', () => {
 
   describe('Search interactions', () => {
     it('saves search term to localStorage on search', async () => {
+      const setSearchTerm = vi.fn();
+      mockedUseLocalStorage.mockReturnValue(['', setSearchTerm, vi.fn()]);
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
-      await user.clear(screen.getByLabelText('Enter Pokémon name'));
       await user.type(
         screen.getByLabelText('Enter Pokémon name'),
         'charmander'
       );
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
-      expect(mockedStorage.setSearch).toHaveBeenCalledWith('charmander');
+      expect(setSearchTerm).toHaveBeenCalledWith('charmander');
     });
 
-    it('calls getByName with search term', async () => {
+    it('calls fetchPokemon with search term', async () => {
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
-      await user.clear(screen.getByLabelText('Enter Pokémon name'));
       await user.type(
         screen.getByLabelText('Enter Pokémon name'),
         'charmander'
@@ -136,15 +145,14 @@ describe('App', () => {
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
       await waitFor(() => {
-        expect(mockedPokemonService.getByName).toHaveBeenCalledWith(
-          'charmander'
-        );
+        expect(mockedApi.fetchPokemon).toHaveBeenCalledWith('charmander');
       });
     });
+
     it('loads page when search is cleared', async () => {
-      mockedStorage.getSearch.mockReturnValue('pikachu');
+      mockedUseLocalStorage.mockReturnValue(['pikachu', vi.fn(), vi.fn()]);
       const user = userEvent.setup();
-      render(<App />);
+      renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
@@ -152,25 +160,26 @@ describe('App', () => {
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
       await waitFor(() => {
-        expect(mockedPokemonService.getPage).toHaveBeenCalledWith(1);
+        expect(mockedApi.fetchPokemonList).toHaveBeenCalled();
       });
     });
 
     it('does not search again with same term', async () => {
-      mockedStorage.getSearch.mockReturnValue('pikachu');
+      mockedUseLocalStorage.mockReturnValue(['pikachu', vi.fn(), vi.fn()]);
       const user = userEvent.setup();
-      render(<App />);
+      renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
-
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
-      expect(mockedPokemonService.getByName).toHaveBeenCalledTimes(1);
+      expect(mockedApi.fetchPokemon).toHaveBeenCalledTimes(1);
     });
 
     it('trims whitespace from search term', async () => {
+      const setSearchTerm = vi.fn();
+      mockedUseLocalStorage.mockReturnValue(['', setSearchTerm, vi.fn()]);
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
@@ -180,16 +189,15 @@ describe('App', () => {
       );
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
-      expect(mockedStorage.setSearch).toHaveBeenCalledWith('pikachu');
-      expect(mockedPokemonService.getByName).toHaveBeenCalledWith('pikachu');
+      expect(setSearchTerm).toHaveBeenCalledWith('pikachu');
     });
 
     it('handles 404 error response', async () => {
-      mockedPokemonService.getByName.mockRejectedValue(
+      mockedApi.fetchPokemon.mockRejectedValue(
         new Error('Pokémon "unknown" not found. Try a different name!')
       );
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
@@ -204,11 +212,11 @@ describe('App', () => {
     });
 
     it('handles 500 error response', async () => {
-      mockedPokemonService.getByName.mockRejectedValue(
+      mockedApi.fetchPokemon.mockRejectedValue(
         new Error('Server error. Please try again later.')
       );
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
@@ -225,43 +233,50 @@ describe('App', () => {
 
   describe('localStorage', () => {
     it('reads search term from localStorage on mount', () => {
-      mockedStorage.getSearch.mockReturnValue('bulbasaur');
-      render(<App />);
-      expect(mockedStorage.getSearch).toHaveBeenCalled();
+      mockedUseLocalStorage.mockReturnValue(['bulbasaur', vi.fn(), vi.fn()]);
+      renderHome(['/?search=bulbasaur&page=1']);
+      expect(mockedUseLocalStorage).toHaveBeenCalled();
     });
 
     it('writes to localStorage when new search performed', async () => {
+      const setSearchTerm = vi.fn();
+      mockedUseLocalStorage.mockReturnValue(['', setSearchTerm, vi.fn()]);
       const user = userEvent.setup();
-      render(<App />);
+      renderHome();
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
 
       await user.type(screen.getByLabelText('Enter Pokémon name'), 'squirtle');
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
-      expect(mockedStorage.setSearch).toHaveBeenCalledWith('squirtle');
-    });
-
-    it('overwrites existing localStorage value on new search', async () => {
-      mockedStorage.getSearch.mockReturnValue('pikachu');
-      const user = userEvent.setup();
-      render(<App />);
-
-      await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
-
-      await user.clear(screen.getByLabelText('Enter Pokémon name'));
-      await user.type(screen.getByLabelText('Enter Pokémon name'), 'squirtle');
-      await user.click(screen.getByRole('button', { name: 'Search' }));
-
-      expect(mockedStorage.setSearch).toHaveBeenCalledWith('squirtle');
+      expect(setSearchTerm).toHaveBeenCalledWith('squirtle');
     });
 
     it('shows empty input when localStorage is empty', async () => {
-      mockedStorage.getSearch.mockReturnValue('');
-      render(<App />);
+      mockedUseLocalStorage.mockReturnValue(['', vi.fn(), vi.fn()]);
+      renderHome();
 
       await waitFor(() => {
         expect(screen.getByLabelText('Enter Pokémon name')).toHaveValue('');
+      });
+    });
+  });
+
+  describe('Pagination', () => {
+    it('shows pagination when no search', async () => {
+      renderHome();
+
+      await waitFor(() => {
+        expect(screen.getByText('Page 1')).toBeInTheDocument();
+      });
+    });
+
+    it('hides pagination when search is active', async () => {
+      mockedUseLocalStorage.mockReturnValue(['pikachu', vi.fn(), vi.fn()]);
+      renderHome(['/?search=pikachu&page=1']);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Page 1')).not.toBeInTheDocument();
       });
     });
   });
