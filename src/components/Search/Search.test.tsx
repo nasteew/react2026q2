@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { Search } from './Search';
+import Search from './Search';
 
 const onChange = vi.fn();
 const onSubmit = vi.fn();
