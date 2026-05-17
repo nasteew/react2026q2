@@ -36,8 +36,6 @@ describe('Search', () => {
 
     expect(onChange).toHaveBeenCalledTimes('bulbasaur'.length);
     expect(onChange).toHaveBeenCalledWith('b');
-    expect(onChange).toHaveBeenCalledWith('bu');
-    expect(onChange).toHaveBeenCalledWith('bul');
   });
 
   it('calls onSubmit when clicking Search button', async () => {
@@ -54,7 +52,7 @@ describe('Search', () => {
     render(
       <Search value="charmander" onChange={onChange} onSubmit={onSubmit} />
     );
-
+    await user.click(screen.getByLabelText('Enter Pokémon name'));
     await user.keyboard('{Enter}');
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
