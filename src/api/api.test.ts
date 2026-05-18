@@ -33,34 +33,37 @@ describe('fetchPokemon', () => {
     expect(result.types).toEqual(['grass', 'poison']);
   });
 
-  it('throws 404 error with pokemon name', async () => {
+  it('throws custom 404 error with pokemon name', async () => {
     server.use(
       http.get(`${BASE_URL}/unknown`, () =>
         HttpResponse.json({}, { status: 404 })
       )
     );
+
     await expect(fetchPokemon('unknown')).rejects.toThrow(
       'Pokémon "unknown" not found. Try a different name!'
     );
   });
 
-  it('throws 500 error', async () => {
+  it('throws server error on 500', async () => {
     server.use(
       http.get(`${BASE_URL}/bulbasaur`, () =>
         HttpResponse.json({}, { status: 500 })
       )
     );
+
     await expect(fetchPokemon('bulbasaur')).rejects.toThrow(
       'Server error. Please try again later.'
     );
   });
 
-  it('throws generic error', async () => {
+  it('throws generic error on 400', async () => {
     server.use(
       http.get(`${BASE_URL}/bulbasaur`, () =>
         HttpResponse.json({}, { status: 400 })
       )
     );
+
     await expect(fetchPokemon('bulbasaur')).rejects.toThrow(
       'Request failed with status 400'
     );
@@ -74,19 +77,21 @@ describe('fetchPokemonList', () => {
     expect(result[0].name).toBe('bulbasaur');
   });
 
-  it('throws 500 error', async () => {
+  it('throws server error on 500', async () => {
     server.use(
       http.get(BASE_URL, () => HttpResponse.json({}, { status: 500 }))
     );
+
     await expect(fetchPokemonList(1)).rejects.toThrow(
       'Server error. Please try again later.'
     );
   });
 
-  it('throws generic error', async () => {
+  it('throws generic error on 400', async () => {
     server.use(
       http.get(BASE_URL, () => HttpResponse.json({}, { status: 400 }))
     );
+
     await expect(fetchPokemonList(1)).rejects.toThrow(
       'Request failed with status 400'
     );
