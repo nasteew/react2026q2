@@ -7,7 +7,7 @@ import type { PokemonListItem, PokemonResponse } from '@/types/pokemonApi';
 import type { PokemonTypeEntry } from '@/types/pokemonType';
 
 export async function fetchPokemonList(page: number): Promise<Item[]> {
-  const limit = 9;
+  const limit = 12;
   const offset = (page - 1) * limit;
 
   const data = await request<{
@@ -28,21 +28,26 @@ export async function fetchPokemon(name: string): Promise<Item> {
     );
 
     return {
+      id: data.id,
       name: data.name,
 
-      image: data.sprites.other['official-artwork'].front_default,
+      image: data.sprites?.other?.['official-artwork']?.front_default ?? '',
 
-      types: data.types.map((t: PokemonTypeEntry) => t.type.name),
+      types: (data.types ?? []).map((t: PokemonTypeEntry) => t.type.name),
 
       height: data.height,
       weight: data.weight,
-      abilities: data.abilities.map((a) => a.ability.name),
-      stats: data.stats.map((s) => ({
+
+      abilities: (data.abilities ?? []).map((a) => a.ability.name),
+
+      stats: (data.stats ?? []).map((s) => ({
         name: s.stat.name,
         value: s.base_stat,
       })),
+
       baseExperience: data.base_experience,
-      moves: data.moves.map((m) => m.move.name),
+
+      moves: (data.moves ?? []).map((m) => m.move.name),
     };
   } catch (error) {
     if (
