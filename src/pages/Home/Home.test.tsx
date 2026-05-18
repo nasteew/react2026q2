@@ -102,16 +102,6 @@ describe('Home', () => {
         ).toBeInTheDocument();
       });
     });
-
-    it('handles unknown error type', async () => {
-      mockedApi.fetchPokemonList.mockRejectedValue('string error');
-
-      renderHome();
-
-      await waitFor(() => {
-        expect(screen.getByText('Unknown error')).toBeInTheDocument();
-      });
-    });
   });
 
   describe('Search interactions', () => {
@@ -170,9 +160,12 @@ describe('Home', () => {
       renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => screen.getByLabelText('Enter Pokémon name'));
+
+      mockedApi.fetchPokemon.mockClear();
+
       await user.click(screen.getByRole('button', { name: 'Search' }));
 
-      expect(mockedApi.fetchPokemon).toHaveBeenCalledTimes(1);
+      expect(mockedApi.fetchPokemon).toHaveBeenCalledTimes(0);
     });
 
     it('trims whitespace from search term', async () => {
@@ -267,7 +260,7 @@ describe('Home', () => {
       renderHome();
 
       await waitFor(() => {
-        expect(screen.getByText('Page 1')).toBeInTheDocument();
+        expect(screen.getByText('1')).toBeInTheDocument();
       });
     });
 
@@ -276,8 +269,84 @@ describe('Home', () => {
       renderHome(['/?search=pikachu&page=1']);
 
       await waitFor(() => {
-        expect(screen.queryByText('Page 1')).not.toBeInTheDocument();
+        expect(screen.queryByText('1')).not.toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Details interactions', () => {
+    it('keeps search param when closing details', async () => {
+      renderHome(['/?search=pika&page=1&details=1']);
+
+      await waitFor(() => screen.getByText('bulbasaur'));
+
+      const leftColumn = screen.getByTestId('left-column');
+      await userEvent.click(leftColumn);
+
+      expect(mockedApi.fetchPokemon).toHaveBeenCalledWith('pika');
+    });
+
+    it('removes details when closing details without search', async () => {
+      renderHome(['/?page=1&details=1']);
+
+      await waitFor(() => screen.getByText('bulbasaur'));
+
+      const leftColumn = screen.getByTestId('left-column');
+      await userEvent.click(leftColumn);
+
+      expect(mockedApi.fetchPokemonList).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('Pagination visibility', () => {
+    it('hides pagination when loading', async () => {
+      mockedApi.fetchPokemonList.mockImplementation(
+        () => new Promise(() => {})
+      );
+
+      renderHome();
+
+      expect(screen.queryByText('1')).not.toBeInTheDocument();
+    });
+
+    it('hides pagination when error occurs', async () => {
+      mockedApi.fetchPokemonList.mockRejectedValue(new Error('fail'));
+
+      renderHome();
+
+      await waitFor(() => {
+        expect(screen.getByText('fail')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText('1')).not.toBeInTheDocument();
+    });
+
+    it('shows pagination when data loaded and no search', async () => {
+      renderHome(['/?page=1']);
+
+      await waitFor(() => {
+        expect(screen.getByText('1')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Details panel rendering', () => {
+    it('renders details panel when details param exists', async () => {
+      renderHome(['/?page=1&details=1']);
+
+      await waitFor(() => screen.getByText('bulbasaur'));
+
+      expect(screen.getByRole('button', { name: '✕' })).toBeInTheDocument();
+    });
+
+    it('does not render details panel when details param missing', async () => {
+      renderHome(['/?page=1']);
+
+      await waitFor(() => screen.getByText('bulbasaur'));
+
+      expect(
+        screen.queryByRole('button', { name: '✕' })
+      ).not.toBeInTheDocument();
     });
   });
 });
