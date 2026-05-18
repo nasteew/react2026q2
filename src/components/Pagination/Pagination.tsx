@@ -23,8 +23,8 @@ function Pagination({ page, onChange }: PaginationProps) {
         type="button"
       />
 
-      <span className="px-2 py-1 bg-white rounded-lg border-2 border-black shadow-sm text-sm">
-        Page {page}
+      <span className="px-3 py-1 bg-white rounded-lg border-2 border-black shadow-sm text-sm">
+        {page}
       </span>
 
       <Button
