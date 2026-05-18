@@ -4,6 +4,7 @@ interface ButtonProps {
   ariaLabel?: string;
   className?: string;
   type?: 'submit' | 'button' | 'reset';
+  disabled?: boolean;
 }
 
 function Button({
@@ -12,6 +13,7 @@ function Button({
   ariaLabel,
   className,
   type = 'button',
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
@@ -25,6 +27,7 @@ function Button({
         focus:outline-none focus:ring-2
         motion-reduce:transition-none ${className}`}
       type={type}
+      disabled={disabled}
     >
       <span className="text-sm">{label}</span>
     </button>
