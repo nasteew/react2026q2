@@ -15,7 +15,10 @@ export function Home() {
   const [params, setParams] = useSearchParams();
 
   const search = params.get('search') || '';
-  const page = params.get('page') || '1';
+
+  const rawPage = Number(params.get('page')) || 1;
+  const page = Math.max(1, rawPage).toString();
+
   const details = params.get('details');
   const isDetailOpen = Boolean(details);
 
