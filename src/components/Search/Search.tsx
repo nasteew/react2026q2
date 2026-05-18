@@ -7,7 +7,7 @@ interface Props {
   onSubmit: () => void;
 }
 
-export function Search({ value, onChange, onSubmit }: Props) {
+function Search({ value, onChange, onSubmit }: Props) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSubmit();
@@ -38,8 +38,10 @@ export function Search({ value, onChange, onSubmit }: Props) {
       <Button
         onClick={onSubmit}
         label="Search"
-        className="bg-red-700 to-yellow-400 focus:ring-white"
+        className="bg-red-700 focus:ring-white px-5 py-2"
       />
     </form>
   );
 }
+
+export default Search;
