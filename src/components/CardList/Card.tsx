@@ -4,9 +4,10 @@ import { typeStyles } from '@/constants/typeStyles';
 
 interface Props {
   item: Item;
+  onClick: (name: number) => void;
 }
 
-const Card = ({ item }: Props) => {
+const Card = ({ item, onClick }: Props) => {
   const types = item.types ?? [];
 
   const primary = typeStyles[types[0]] || typeStyles.default;
@@ -22,10 +23,12 @@ const Card = ({ item }: Props) => {
         shadow-sm
         transition-transform duration-300
         hover:shadow-lg hover:-translate-y-1
+        cursor-pointer
       `}
+      onClick={() => onClick(item.id)}
     >
       <div
-        className={`relative h-44 flex items-center justify-center ${gradient}`}
+        className={`relative h-50 flex items-center justify-center ${gradient}`}
       >
         <div className="absolute inset-0 bg-black/6 pointer-events-none" />
 
