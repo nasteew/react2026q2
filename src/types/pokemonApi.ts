@@ -1,6 +1,7 @@
 import type { PokemonTypeEntry } from './pokemonType';
 
 export interface PokemonResponse {
+  id: number;
   name: string;
   height: number;
   weight: number;
