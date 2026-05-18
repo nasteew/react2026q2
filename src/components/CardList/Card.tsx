@@ -8,7 +8,7 @@ interface Props {
 }
 
 const Card = ({ item, onClick }: Props) => {
-  const types = item.types ?? [];
+  const types = item.types;
 
   const primary = typeStyles[types[0]] || typeStyles.default;
   const secondary = typeStyles[types[1]] || primary;
@@ -26,6 +26,7 @@ const Card = ({ item, onClick }: Props) => {
         cursor-pointer
       `}
       onClick={() => onClick(item.id)}
+      data-testid={`card-${item.id}`}
     >
       <div
         className={`relative h-50 flex items-center justify-center ${gradient}`}
@@ -73,12 +74,12 @@ const Card = ({ item, onClick }: Props) => {
           <div className="flex flex-col gap-1">
             <div className="flex gap-2">
               <span className="font-semibold">Height:</span>
-              <span>{item.height ?? '—'}</span>
+              <span>{item.height}</span>
             </div>
 
             <div className="flex gap-2">
               <span className="font-semibold">Weight:</span>
-              <span>{item.weight ?? '—'}</span>
+              <span>{item.weight}</span>
             </div>
           </div>
         </div>

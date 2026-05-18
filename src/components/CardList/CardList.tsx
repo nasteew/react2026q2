@@ -10,6 +10,7 @@ interface Props {
 const CardList = ({ items, onCardClick, isDetailOpen }: Props) => {
   return (
     <div
+      role="grid"
       className={`grid gap-4 ${
         isDetailOpen
           ? 'grid-cols-1 sm:grid-cols-2'
