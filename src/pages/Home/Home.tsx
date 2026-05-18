@@ -71,17 +71,25 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="px-6 py-3 flex items-center gap-6 bg-red-500 shadow-lg">
+      <header className="px-2 py-3 flex flex-col sm:flex-row sm:items-center bg-red-500 shadow-lg">
         <nav className="flex-shrink-0">
           <Link
             to="/about"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-800 hover:bg-white/30 text-white font-semibold transition-all"
+            aria-label="About page"
+            className={`
+    inline-flex items-center px-5 py-2 rounded-xl
+    border-2 border-black shadow-lg font-semibold text-white
+    bg-red-700 hover:bg-red-700
+    active:scale-95 transform transition-transform duration-150 ease-out
+    hover:scale-105 hover:shadow-xl
+    focus:outline-none focus:ring-2
+  `}
           >
-            About
+            <span className="text-sm">About →</span>
           </Link>
         </nav>
 
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           <Search value={query} onChange={setQuery} onSubmit={handleSubmit} />
         </div>
       </header>
