@@ -31,23 +31,23 @@ export async function fetchPokemon(name: string): Promise<Item> {
       id: data.id,
       name: data.name,
 
-      image: data.sprites?.other?.['official-artwork']?.front_default ?? '',
+      image: data.sprites?.other?.['official-artwork']?.front_default,
 
-      types: (data.types ?? []).map((t: PokemonTypeEntry) => t.type.name),
+      types: data.types.map((t: PokemonTypeEntry) => t.type.name),
 
       height: data.height,
       weight: data.weight,
 
-      abilities: (data.abilities ?? []).map((a) => a.ability.name),
+      abilities: data.abilities.map((a) => a.ability.name),
 
-      stats: (data.stats ?? []).map((s) => ({
+      stats: data.stats.map((s) => ({
         name: s.stat.name,
         value: s.base_stat,
       })),
 
       baseExperience: data.base_experience,
 
-      moves: (data.moves ?? []).map((m) => m.move.name),
+      moves: data.moves.map((m) => m.move.name),
     };
   } catch (error) {
     if (
