@@ -16,7 +16,7 @@ export default function PokemonDetails() {
   if (error) return <ErrorMessage message={error} />;
   if (!data) return <ErrorMessage message="Something went wrong" />;
 
-  const types = data.types ?? [];
+  const types = data.types;
   const primary = typeStyles[types[0]] || typeStyles.default;
   const secondary = typeStyles[types[1]] || primary;
 
@@ -79,7 +79,7 @@ export default function PokemonDetails() {
 
           <div className="flex gap-2">
             <span className="font-semibold">Base XP:</span>
-            <span>{data.baseExperience ?? '—'}</span>
+            <span>{data.baseExperience}</span>
           </div>
         </div>
 
