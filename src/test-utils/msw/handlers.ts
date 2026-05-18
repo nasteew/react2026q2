@@ -40,7 +40,15 @@ export const mockPokemonResponse: PokemonResponse = {
 
 export const handlers = [
   http.get(BASE_URL, () => {
-    return HttpResponse.json({ results: [{ name: 'bulbasaur' }] });
+    return HttpResponse.json({
+      results: [
+        {
+          name: 'bulbasaur',
+          url: `${BASE_URL}/bulbasaur`,
+        },
+      ],
+      count: 1302,
+    });
   }),
 
   http.get(`${BASE_URL}/:name`, () => {

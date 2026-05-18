@@ -6,12 +6,16 @@ type PokemonListState = {
   data: Item[];
   loading: boolean;
   error: string;
+  totalPages: number;
+  page: number;
 };
 
 const initialState: PokemonListState = {
   data: [],
   loading: false,
   error: '',
+  totalPages: 1,
+  page: 1,
 };
 
 export function usePokemonListQuery(page: number, search: string) {
@@ -24,20 +28,49 @@ export function usePokemonListQuery(page: number, search: string) {
       try {
         setState((prev) => ({ ...prev, loading: true, error: '' }));
 
-        let data: Item[];
-
         if (search) {
           const pokemon = await fetchPokemon(search);
-          data = [pokemon];
-        } else {
-          data = await fetchPokemonList(page);
+
+          if (!controller.signal.aborted) {
+            setState({
+              data: [pokemon],
+              loading: false,
+              error: '',
+              totalPages: 1,
+              page: 1,
+            });
+          }
+          return;
         }
+
+        const { items, count } = await fetchPokemonList(page);
+        const limit = 12;
+        const totalPages = Math.ceil(count / limit);
+
+        const safePage = Math.max(1, Math.min(page, totalPages));
+
+        if (safePage === page) {
+          if (!controller.signal.aborted) {
+            setState({
+              data: items,
+              loading: false,
+              error: '',
+              totalPages,
+              page: safePage,
+            });
+          }
+          return;
+        }
+
+        const { items: correctedItems } = await fetchPokemonList(safePage);
 
         if (!controller.signal.aborted) {
           setState({
-            data,
+            data: correctedItems,
             loading: false,
             error: '',
+            totalPages,
+            page: safePage,
           });
         }
       } catch (err) {
@@ -46,13 +79,14 @@ export function usePokemonListQuery(page: number, search: string) {
             data: [],
             loading: false,
             error: err.message,
+            totalPages: 1,
+            page: 1,
           });
         }
       }
     }
 
     load();
-
     return () => controller.abort();
   }, [page, search]);
 

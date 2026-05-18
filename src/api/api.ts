@@ -6,19 +6,26 @@ import type { Item } from '@/types/item';
 import type { PokemonListItem, PokemonResponse } from '@/types/pokemonApi';
 import type { PokemonTypeEntry } from '@/types/pokemonType';
 
-export async function fetchPokemonList(page: number): Promise<Item[]> {
+export async function fetchPokemonList(page: number): Promise<{
+  items: Item[];
+  count: number;
+}> {
   const limit = 12;
   const offset = (page - 1) * limit;
 
   const data = await request<{
     results: PokemonListItem[];
+    count: number;
   }>(`${BASE_URL}?limit=${limit}&offset=${offset}`);
 
-  const detailedRequests: Promise<Item>[] = data.results.map((pokemon) =>
-    fetchPokemon(pokemon.name)
+  const items = await Promise.all(
+    data.results.map((pokemon) => fetchPokemon(pokemon.name))
   );
 
-  return Promise.all(detailedRequests);
+  return {
+    items,
+    count: data.count,
+  };
 }
 
 export async function fetchPokemon(name: string): Promise<Item> {

@@ -34,12 +34,16 @@ const Card = ({ item, onClick }: Props) => {
         <div className="absolute inset-0 bg-black/6 pointer-events-none" />
 
         <div className="relative z-10 w-full h-full flex items-center justify-center">
-          <img
-            src={item.image}
-            alt={item.name}
-            loading="lazy"
-            className="max-h-36 object-contain transition-transform duration-300 group-hover:scale-105"
-          />
+          {item.image ? (
+            <img
+              src={item.image}
+              alt={item.name}
+              loading="lazy"
+              className="max-h-36 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <Pokeball className="w-20 h-20 opacity-70" />
+          )}
         </div>
 
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">

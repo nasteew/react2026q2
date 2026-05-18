@@ -16,15 +16,20 @@ export function Home() {
 
   const search = params.get('search') || '';
 
-  const rawPage = Number(params.get('page')) || 1;
-  const page = Math.max(1, rawPage).toString();
+  const page = params.get('page') || '1';
 
   const details = params.get('details');
   const isDetailOpen = Boolean(details);
 
   const [query, setQuery] = useState(search || searchTerm);
 
-  const { data, loading, error } = usePokemonListQuery(Number(page), search);
+  const {
+    data,
+    loading,
+    error,
+    totalPages,
+    page: safePage,
+  } = usePokemonListQuery(Number(page), search);
 
   const handleSubmit = () => {
     const trimmed = query.trim();
@@ -42,7 +47,7 @@ export function Home() {
 
   const handleCardClick = (id: number) => {
     const next: Record<string, string> = {
-      page,
+      page: String(safePage),
       details: String(id),
     };
 
@@ -52,7 +57,7 @@ export function Home() {
   };
 
   const handleCloseDetails = () => {
-    const next: Record<string, string> = { page };
+    const next: Record<string, string> = { page: String(safePage) };
 
     if (search) next.search = search;
 
@@ -135,7 +140,11 @@ export function Home() {
         </div>
       </main>
       {showPagination && (
-        <Pagination page={Number(page)} onChange={handlePageChange} />
+        <Pagination
+          page={safePage}
+          onChange={handlePageChange}
+          totalPages={totalPages}
+        />
       )}
       <div className="flex justify-end p-4">
         <ErrorButton />
