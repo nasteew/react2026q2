@@ -5,8 +5,8 @@ export interface Item {
   types: string[];
   height: number;
   weight: number;
-  abilities?: string[];
-  stats?: { name: string; value: number }[];
-  baseExperience?: number;
-  moves?: string[];
+  abilities: string[];
+  stats: { name: string; value: number }[];
+  baseExperience: number;
+  moves: string[];
 }
