@@ -40,6 +40,6 @@ describe('Card', () => {
     await user.click(screen.getByRole('article'));
 
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(onClick).toHaveBeenCalledWith(mockItem.name);
+    expect(onClick).toHaveBeenCalledWith(mockItem.id);
   });
 });
