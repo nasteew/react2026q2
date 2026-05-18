@@ -23,13 +23,10 @@ export function Home() {
 
   const [query, setQuery] = useState(search || searchTerm);
 
-  const {
-    data,
-    loading,
-    error,
-    totalPages,
-    page: safePage,
-  } = usePokemonListQuery(Number(page), search);
+  const { data, loading, error, totalPages } = usePokemonListQuery(
+    Number(page),
+    search
+  );
 
   const handleSubmit = () => {
     const trimmed = query.trim();
@@ -47,7 +44,7 @@ export function Home() {
 
   const handleCardClick = (id: number) => {
     const next: Record<string, string> = {
-      page: String(safePage),
+      page: String(page),
       details: String(id),
     };
 
@@ -57,7 +54,7 @@ export function Home() {
   };
 
   const handleCloseDetails = () => {
-    const next: Record<string, string> = { page: String(safePage) };
+    const next: Record<string, string> = { page: String(page) };
 
     if (search) next.search = search;
 
@@ -75,7 +72,8 @@ export function Home() {
     setParams(next);
   };
 
-  const showPagination = !search && !loading && !error && data;
+  const showPagination =
+    !search && !loading && !error && data && data.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -141,7 +139,7 @@ export function Home() {
       </main>
       {showPagination && (
         <Pagination
-          page={safePage}
+          page={Number(page)}
           onChange={handlePageChange}
           totalPages={totalPages}
         />

@@ -28,6 +28,17 @@ export function usePokemonListQuery(page: number, search: string) {
       try {
         setState((prev) => ({ ...prev, loading: true, error: '' }));
 
+        if (page < 1) {
+          setState({
+            data: [],
+            loading: false,
+            error: '',
+            totalPages: 1,
+            page,
+          });
+          return;
+        }
+
         if (search) {
           const pokemon = await fetchPokemon(search);
 
@@ -47,30 +58,13 @@ export function usePokemonListQuery(page: number, search: string) {
         const limit = 12;
         const totalPages = Math.ceil(count / limit);
 
-        const safePage = Math.max(1, Math.min(page, totalPages));
-
-        if (safePage === page) {
-          if (!controller.signal.aborted) {
-            setState({
-              data: items,
-              loading: false,
-              error: '',
-              totalPages,
-              page: safePage,
-            });
-          }
-          return;
-        }
-
-        const { items: correctedItems } = await fetchPokemonList(safePage);
-
         if (!controller.signal.aborted) {
           setState({
-            data: correctedItems,
+            data: items,
             loading: false,
             error: '',
             totalPages,
-            page: safePage,
+            page,
           });
         }
       } catch (err) {
