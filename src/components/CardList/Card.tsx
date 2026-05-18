@@ -4,10 +4,11 @@ import { typeStyles } from '@/constants/typeStyles';
 
 interface Props {
   item: Item;
+  onClick: (name: number) => void;
 }
 
-const Card = ({ item }: Props) => {
-  const types = item.types ?? [];
+const Card = ({ item, onClick }: Props) => {
+  const types = item.types;
 
   const primary = typeStyles[types[0]] || typeStyles.default;
   const secondary = typeStyles[types[1]] || primary;
@@ -22,20 +23,27 @@ const Card = ({ item }: Props) => {
         shadow-sm
         transition-transform duration-300
         hover:shadow-lg hover:-translate-y-1
+        cursor-pointer
       `}
+      onClick={() => onClick(item.id)}
+      data-testid={`card-${item.id}`}
     >
       <div
-        className={`relative h-44 flex items-center justify-center ${gradient}`}
+        className={`relative h-50 flex items-center justify-center ${gradient}`}
       >
         <div className="absolute inset-0 bg-black/6 pointer-events-none" />
 
         <div className="relative z-10 w-full h-full flex items-center justify-center">
-          <img
-            src={item.image}
-            alt={item.name}
-            loading="lazy"
-            className="max-h-36 object-contain transition-transform duration-300 group-hover:scale-105"
-          />
+          {item.image ? (
+            <img
+              src={item.image}
+              alt={item.name}
+              loading="lazy"
+              className="max-h-36 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <Pokeball className="w-20 h-20 opacity-70" />
+          )}
         </div>
 
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">
@@ -70,12 +78,12 @@ const Card = ({ item }: Props) => {
           <div className="flex flex-col gap-1">
             <div className="flex gap-2">
               <span className="font-semibold">Height:</span>
-              <span>{item.height ?? '—'}</span>
+              <span>{item.height}</span>
             </div>
 
             <div className="flex gap-2">
               <span className="font-semibold">Weight:</span>
-              <span>{item.weight ?? '—'}</span>
+              <span>{item.weight}</span>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import Pokeball from '../ui/icons/Pokeball';
 import Button from '../ui/Button/Button';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface State {

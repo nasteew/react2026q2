@@ -1,46 +1,69 @@
+import { request } from './client';
+
 import { BASE_URL } from '@/constants/api';
+
 import type { Item } from '@/types/item';
+import type { PokemonListItem, PokemonResponse } from '@/types/pokemonApi';
 import type { PokemonTypeEntry } from '@/types/pokemonType';
 
-export async function fetchPokemonList(page: number): Promise<Item[]> {
-  const limit = 9;
+export async function fetchPokemonList(page: number): Promise<{
+  items: Item[];
+  count: number;
+}> {
+  const limit = 12;
   const offset = (page - 1) * limit;
 
-  const response = await fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`);
+  const data = await request<{
+    results: PokemonListItem[];
+    count: number;
+  }>(`${BASE_URL}?limit=${limit}&offset=${offset}`);
 
-  if (!response.ok) {
-    if (response.status >= 500)
-      throw new Error('Server error. Please try again later.');
-    throw new Error(`Failed to get Pokémon list (${response.status})`);
-  }
-
-  const data = await response.json();
-
-  const detailedRequests: Promise<Item>[] = data.results.map(
-    (pokemon: { name: string }) => fetchPokemon(pokemon.name)
+  const items = await Promise.all(
+    data.results.map((pokemon) => fetchPokemon(pokemon.name))
   );
 
-  return Promise.all(detailedRequests);
+  return {
+    items,
+    count: data.count,
+  };
 }
 
 export async function fetchPokemon(name: string): Promise<Item> {
-  const response = await fetch(`${BASE_URL}/${name.toLowerCase()}`);
+  try {
+    const data = await request<PokemonResponse>(
+      `${BASE_URL}/${name.toLowerCase()}`
+    );
 
-  if (!response.ok) {
-    if (response.status === 404)
+    return {
+      id: data.id,
+      name: data.name,
+
+      image: data.sprites?.other?.['official-artwork']?.front_default,
+
+      types: data.types.map((t: PokemonTypeEntry) => t.type.name),
+
+      height: data.height,
+      weight: data.weight,
+
+      abilities: data.abilities.map((a) => a.ability.name),
+
+      stats: data.stats.map((s) => ({
+        name: s.stat.name,
+        value: s.base_stat,
+      })),
+
+      baseExperience: data.base_experience,
+
+      moves: data.moves.map((m) => m.move.name),
+    };
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === 'Request failed with status 404'
+    ) {
       throw new Error(`Pokémon "${name}" not found. Try a different name!`);
-    if (response.status >= 500)
-      throw new Error('Server error. Please try again later.');
-    throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    throw error;
   }
-
-  const data = await response.json();
-
-  return {
-    name: data.name,
-    image: data.sprites.other['official-artwork'].front_default,
-    types: data.types.map((t: PokemonTypeEntry) => t.type.name),
-    height: data.height,
-    weight: data.weight,
-  };
 }

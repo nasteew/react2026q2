@@ -1,71 +1,47 @@
-import { Component } from 'react';
-import type { ChangeEvent, SubmitEventHandler } from 'react';
 import Pokeball from '../ui/icons/Pokeball';
 import Button from '../ui/Button/Button';
+
 interface Props {
   value: string;
-  onSearch: (value: string) => void;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
 }
 
-interface State {
-  inputValue: string;
-}
-
-class Search extends Component<Props, State> {
-  state: State = {
-    inputValue: '',
-  };
-
-  componentDidMount(): void {
-    this.setState({ inputValue: this.props.value });
-  }
-
-  componentDidUpdate(prevProps: Readonly<Props>): void {
-    if (this.props.value !== prevProps.value) {
-      this.setState({ inputValue: this.props.value });
-    }
-  }
-
-  handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: e.target.value });
-  };
-
-  handleSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
+function Search({ value, onChange, onSubmit }: Props) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.props.onSearch(this.state.inputValue);
+    onSubmit();
   };
 
-  render() {
-    return (
-      <form
-        onSubmit={this.handleSubmit}
-        className="flex gap-4 items-center max-w-4xl mx-auto p-4"
-        role="search"
-        aria-label="Search Pokémon"
-      >
-        <div className="relative flex-1">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <Pokeball className="w-5 h-5" />
-          </span>
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex gap-4 items-center max-w-4xl mx-auto p-4"
+      role="search"
+      aria-label="Search Pokémon"
+    >
+      <div className="relative flex-1">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Pokeball className="w-5 h-5" />
+        </span>
 
-          <input
-            type="text"
-            value={this.state.inputValue}
-            onChange={this.handleChange}
-            className="w-full border-2 border-black rounded-md px-3 py-2 pl-12 bg-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white transition"
-            placeholder="Enter Pokémon name..."
-            aria-label="Enter Pokémon name"
-          />
-        </div>
-
-        <Button
-          onClick={() => this.props.onSearch(this.state.inputValue)}
-          label="Search"
-          className="bg-red-700 to-yellow-400 focus:ring-white"
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full border-2 border-black rounded-md px-3 py-2 pl-12 bg-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white transition"
+          placeholder="Enter Pokémon name..."
+          aria-label="Enter Pokémon name"
         />
-      </form>
-    );
-  }
+      </div>
+
+      <Button
+        onClick={onSubmit}
+        label="Search"
+        className="bg-red-700 focus:ring-white px-5 py-2"
+      />
+    </form>
+  );
 }
 
 export default Search;

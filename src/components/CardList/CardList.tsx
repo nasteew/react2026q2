@@ -3,13 +3,22 @@ import Card from './Card';
 
 interface Props {
   items: Item[];
+  onCardClick: (name: number) => void;
+  isDetailOpen?: boolean;
 }
 
-const CardList = ({ items }: Props) => {
+const CardList = ({ items, onCardClick, isDetailOpen }: Props) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div
+      role="grid"
+      className={`grid gap-4 ${
+        isDetailOpen
+          ? 'grid-cols-1 sm:grid-cols-2'
+          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+      }`}
+    >
       {items.map((item) => (
-        <Card key={item.name} item={item} />
+        <Card key={item.name} item={item} onClick={onCardClick} />
       ))}
     </div>
   );
