@@ -1,35 +1,27 @@
-import { useCallback, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-
+import { useState } from 'react';
+import { Link, Outlet, useSearchParams } from 'react-router-dom';
 import useLocalStorage from '@/hooks/useLocalStorage';
-import { useQuery } from '@/hooks/useQuery';
-
-import { fetchPokemon, fetchPokemonList } from '@/api/api';
-
-import { Search } from '@/components/Search/Search';
+import Search from '@/components/Search/Search';
 import Loader from '@/components/Loader/Loader';
 import CardList from '@/components/CardList/CardList';
 import ErrorButton from '@/components/ErrorButton/ErrorButton';
-import type { Item } from '@/types/item';
+import Pagination from '@/components/Pagination/Pagination';
+import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
+import Button from '@/components/ui/Button/Button';
+import { usePokemonListQuery } from '@/hooks/usePokemonListQuery';
 
 export function Home() {
   const [searchTerm, setSearchTerm] = useLocalStorage();
-
   const [params, setParams] = useSearchParams();
+
   const search = params.get('search') || '';
-  const page = Number(params.get('page') || '1');
+  const page = params.get('page') || '1';
+  const details = params.get('details');
+  const isDetailOpen = Boolean(details);
 
-  const [query, setQuery] = useState(searchTerm);
+  const [query, setQuery] = useState(search || searchTerm);
 
-  const queryFn = useCallback(
-    (): Promise<Item[]> =>
-      search
-        ? fetchPokemon(search).then((item) => [item])
-        : fetchPokemonList(page),
-    [search, page]
-  );
-
-  const { data, loading, error } = useQuery(queryFn);
+  const { data, loading, error } = usePokemonListQuery(Number(page), search);
 
   const handleSubmit = () => {
     const trimmed = query.trim();
@@ -45,52 +37,96 @@ export function Home() {
     }
   };
 
-  const handlePageChange = (newPage: number) => {
-    setParams({ search, page: String(newPage) });
+  const handleCardClick = (id: number) => {
+    const next: Record<string, string> = {
+      page,
+      details: String(id),
+    };
+
+    if (search) next.search = search;
+
+    setParams(next);
   };
+
+  const handleCloseDetails = () => {
+    const next: Record<string, string> = { page };
+
+    if (search) next.search = search;
+
+    setParams(next);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const next: Record<string, string> = {
+      page: String(newPage),
+    };
+
+    if (search) next.search = search;
+    if (details) next.details = details;
+
+    setParams(next);
+  };
+
+  const showPagination = !search && !loading && !error && data;
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-red-500 shadow-lg">
-        <Search value={query} onChange={setQuery} onSubmit={handleSubmit} />
+      <header className="px-6 py-3 flex items-center gap-6 bg-red-500 shadow-lg">
+        <nav className="flex-shrink-0">
+          <Link
+            to="/about"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-800 hover:bg-white/30 text-white font-semibold transition-all"
+          >
+            About
+          </Link>
+        </nav>
+
+        <div className="flex-1">
+          <Search value={query} onChange={setQuery} onSubmit={handleSubmit} />
+        </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-4 space-y-6">
-        {loading && <Loader />}
+      <main
+        className={`p-4 transition-all duration-300 ${
+          isDetailOpen ? '' : 'max-w-5xl mx-auto'
+        }`}
+      >
+        <div className="flex gap-4 items-start">
+          <div
+            data-testid="left-column"
+            className={`min-w-0 transition-all duration-300 ${
+              isDetailOpen ? 'w-1/2 cursor-pointer' : 'w-full'
+            }`}
+            onClick={isDetailOpen ? handleCloseDetails : undefined}
+          >
+            {loading && <Loader />}
+            {error && <ErrorMessage message={error || 'Unknown error'} />}
 
-        {error && (
-          <div className="flex flex-col items-center justify-center p-8 bg-white rounded-xl border-3 border-red-500 text-center">
-            <p className="text-red-700 font-medium">{error}</p>
+            {!loading && !error && data && (
+              <CardList
+                items={data}
+                onCardClick={handleCardClick}
+                isDetailOpen={isDetailOpen}
+              />
+            )}
           </div>
-        )}
 
-        {!loading && !error && data && <CardList items={data} />}
-
-        {!search && !loading && !error && (
-          <div className="flex justify-center gap-4 mt-6">
-            <button
-              disabled={page === 1}
-              onClick={() => handlePageChange(page - 1)}
-              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
-
-            <span className="px-4 py-2 bg-white rounded border">
-              Page {page}
-            </span>
-
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              className="px-4 py-2 bg-gray-300 rounded"
-            >
-              Next
-            </button>
-          </div>
-        )}
+          {isDetailOpen && (
+            <div className="w-1/2 sticky top-4 max-h-[calc(100vh-6rem)] overflow-y-auto bg-white shadow-2xl rounded-2xl">
+              <Button
+                onClick={handleCloseDetails}
+                className="absolute top-3 right-3 z-10 text-black px-3 py-2 rounded-lg border border-black bg-red-800"
+                label="✕"
+              />
+              <Outlet />
+            </div>
+          )}
+        </div>
       </main>
-
-      <div className="max-w-4xl mx-auto flex justify-end p-4">
+      {showPagination && (
+        <Pagination page={Number(page)} onChange={handlePageChange} />
+      )}
+      <div className="flex justify-end p-4">
         <ErrorButton />
       </div>
     </div>
