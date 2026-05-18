@@ -7,4 +7,19 @@ export const mockItem: Item = {
   types: ['grass', 'poison'],
   height: 7,
   weight: 69,
+  baseExperience: 64,
+  abilities: ['overgrow', 'chlorophyll'],
+  stats: [
+    { name: 'hp', value: 45 },
+    { name: 'attack', value: 49 },
+    { name: 'defense', value: 49 },
+  ],
+  moves: [
+    'tackle',
+    'growl',
+    'vine whip',
+    'razor leaf',
+    'sleep powder',
+    'poison powder',
+  ],
 };

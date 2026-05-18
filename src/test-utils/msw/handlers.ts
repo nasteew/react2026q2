@@ -1,9 +1,12 @@
 import { http, HttpResponse } from 'msw';
 import { BASE_URL } from '@/constants/api';
 import { mockItem } from '../mocks/mockItem';
+import type { PokemonResponse } from '@/types/pokemonApi';
 
-const mockPokemonResponse = {
+export const mockPokemonResponse: PokemonResponse = {
+  id: mockItem.id,
   name: mockItem.name,
+
   sprites: {
     other: {
       'official-artwork': {
@@ -11,9 +14,28 @@ const mockPokemonResponse = {
       },
     },
   },
-  types: [{ type: { name: 'grass' } }, { type: { name: 'poison' } }],
+
+  types: mockItem.types.map((type) => ({
+    type: { name: type },
+  })),
+
   height: mockItem.height,
   weight: mockItem.weight,
+
+  base_experience: mockItem.baseExperience,
+
+  abilities: mockItem.abilities.map((ability) => ({
+    ability: { name: ability },
+  })),
+
+  stats: mockItem.stats.map((stat) => ({
+    base_stat: stat.value,
+    stat: { name: stat.name },
+  })),
+
+  moves: mockItem.moves.map((move) => ({
+    move: { name: move },
+  })),
 };
 
 export const handlers = [
