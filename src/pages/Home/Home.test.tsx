@@ -28,7 +28,10 @@ function renderHome(initialEntries = ['/?page=1']) {
 
 beforeEach(() => {
   mockedUseLocalStorage.mockReturnValue(['', vi.fn(), vi.fn()]);
-  mockedApi.fetchPokemonList.mockResolvedValue([mockItem]);
+  mockedApi.fetchPokemonList.mockResolvedValue({
+    items: [mockItem],
+    count: 1302,
+  });
   mockedApi.fetchPokemon.mockResolvedValue(mockItem);
 });
 
@@ -69,7 +72,16 @@ describe('Home', () => {
     it('shows loading state during initial fetch', async () => {
       mockedApi.fetchPokemonList.mockImplementation(
         () =>
-          new Promise((resolve) => setTimeout(() => resolve([mockItem]), 100))
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  items: [mockItem],
+                  count: 1302,
+                }),
+              100
+            )
+          )
       );
 
       renderHome();
@@ -260,7 +272,7 @@ describe('Home', () => {
       renderHome();
 
       await waitFor(() => {
-        expect(screen.getByText('1')).toBeInTheDocument();
+        expect(screen.getByText(/1\s*\/\s*\d+/)).toBeInTheDocument();
       });
     });
 
@@ -325,7 +337,7 @@ describe('Home', () => {
       renderHome(['/?page=1']);
 
       await waitFor(() => {
-        expect(screen.getByText('1')).toBeInTheDocument();
+        expect(screen.getByText(/1\s*\/\s*\d+/)).toBeInTheDocument();
       });
     });
   });

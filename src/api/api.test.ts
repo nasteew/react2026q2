@@ -73,8 +73,10 @@ describe('fetchPokemon', () => {
 describe('fetchPokemonList', () => {
   it('returns list of mapped pokemons', async () => {
     const result = await fetchPokemonList(1);
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('bulbasaur');
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].name).toBe('bulbasaur');
+    expect(result.count).toBeDefined();
   });
 
   it('throws server error on 500', async () => {

@@ -1,16 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Pagination from './Pagination';
+import { vi } from 'vitest';
 
 describe('Pagination', () => {
   it('renders current page number', () => {
-    render(<Pagination page={5} onChange={() => {}} />);
+    render(<Pagination page={5} totalPages={10} onChange={() => {}} />);
 
-    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('5 / 10')).toBeInTheDocument();
   });
 
   it('disables previous button when page = 1', async () => {
-    render(<Pagination page={1} onChange={() => {}} />);
+    render(<Pagination page={1} totalPages={10} onChange={() => {}} />);
 
     const prevBtn = screen.getByRole('button', { name: 'Previous page' });
 
@@ -18,7 +19,7 @@ describe('Pagination', () => {
   });
 
   it('enables previous button when page > 1', async () => {
-    render(<Pagination page={3} onChange={() => {}} />);
+    render(<Pagination page={3} totalPages={10} onChange={() => {}} />);
 
     const prevBtn = screen.getByRole('button', { name: 'Previous page' });
 
@@ -29,7 +30,7 @@ describe('Pagination', () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
 
-    render(<Pagination page={4} onChange={onChange} />);
+    render(<Pagination page={4} totalPages={10} onChange={onChange} />);
 
     const prevBtn = screen.getByRole('button', { name: 'Previous page' });
 
@@ -42,7 +43,7 @@ describe('Pagination', () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
 
-    render(<Pagination page={1} onChange={onChange} />);
+    render(<Pagination page={1} totalPages={10} onChange={onChange} />);
 
     const prevBtn = screen.getByRole('button', { name: 'Previous page' });
 
@@ -55,12 +56,20 @@ describe('Pagination', () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
 
-    render(<Pagination page={10} onChange={onChange} />);
+    render(<Pagination page={10} totalPages={20} onChange={onChange} />);
 
     const nextBtn = screen.getByRole('button', { name: 'Next page' });
 
     await user.click(nextBtn);
 
     expect(onChange).toHaveBeenCalledWith(11);
+  });
+
+  it('disables next button on last page', async () => {
+    render(<Pagination page={10} totalPages={10} onChange={() => {}} />);
+
+    const nextBtn = screen.getByRole('button', { name: 'Next page' });
+
+    expect(nextBtn).toBeDisabled();
   });
 });
