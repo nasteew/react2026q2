@@ -6,6 +6,7 @@ export const typeStyles: Record<
     bg: string;
     from: string;
     to: string;
+    solid: string;
   }
 > = {
   fire: {
@@ -14,6 +15,7 @@ export const typeStyles: Record<
     bg: 'bg-red-50',
     from: 'from-red-400',
     to: 'to-orange-200',
+    solid: 'bg-red-500',
   },
   water: {
     border: 'border-blue-300',
@@ -21,6 +23,7 @@ export const typeStyles: Record<
     bg: 'bg-blue-50',
     from: 'from-blue-400',
     to: 'to-cyan-200',
+    solid: 'bg-blue-500',
   },
   grass: {
     border: 'border-green-300',
@@ -28,6 +31,7 @@ export const typeStyles: Record<
     bg: 'bg-green-50',
     from: 'from-green-400',
     to: 'to-lime-200',
+    solid: 'bg-green-500',
   },
   electric: {
     border: 'border-yellow-300',
@@ -35,6 +39,7 @@ export const typeStyles: Record<
     bg: 'bg-yellow-50',
     from: 'from-yellow-300',
     to: 'to-amber-200',
+    solid: 'bg-yellow-400',
   },
   psychic: {
     border: 'border-pink-300',
@@ -42,6 +47,7 @@ export const typeStyles: Record<
     bg: 'bg-pink-50',
     from: 'from-pink-400',
     to: 'to-rose-200',
+    solid: 'bg-pink-500',
   },
   ice: {
     border: 'border-cyan-300',
@@ -49,6 +55,7 @@ export const typeStyles: Record<
     bg: 'bg-cyan-50',
     from: 'from-cyan-300',
     to: 'to-blue-100',
+    solid: 'bg-cyan-400',
   },
   dragon: {
     border: 'border-indigo-400',
@@ -56,6 +63,7 @@ export const typeStyles: Record<
     bg: 'bg-indigo-50',
     from: 'from-indigo-400',
     to: 'to-violet-300',
+    solid: 'bg-indigo-600',
   },
   dark: {
     border: 'border-stone-500',
@@ -63,6 +71,7 @@ export const typeStyles: Record<
     bg: 'bg-stone-100',
     from: 'from-stone-500',
     to: 'to-stone-300',
+    solid: 'bg-stone-700',
   },
   fairy: {
     border: 'border-fuchsia-300',
@@ -70,6 +79,7 @@ export const typeStyles: Record<
     bg: 'bg-fuchsia-50',
     from: 'from-fuchsia-300',
     to: 'to-pink-200',
+    solid: 'bg-fuchsia-400',
   },
   fighting: {
     border: 'border-orange-400',
@@ -77,6 +87,7 @@ export const typeStyles: Record<
     bg: 'bg-orange-50',
     from: 'from-orange-400',
     to: 'to-red-300',
+    solid: 'bg-orange-600',
   },
   poison: {
     border: 'border-purple-300',
@@ -84,6 +95,7 @@ export const typeStyles: Record<
     bg: 'bg-purple-50',
     from: 'from-purple-400',
     to: 'to-fuchsia-200',
+    solid: 'bg-purple-600',
   },
   ground: {
     border: 'border-amber-400',
@@ -91,6 +103,7 @@ export const typeStyles: Record<
     bg: 'bg-amber-50',
     from: 'from-amber-400',
     to: 'to-yellow-200',
+    solid: 'bg-amber-500',
   },
   rock: {
     border: 'border-stone-400',
@@ -98,6 +111,7 @@ export const typeStyles: Record<
     bg: 'bg-stone-50',
     from: 'from-stone-400',
     to: 'to-stone-200',
+    solid: 'bg-stone-500',
   },
   bug: {
     border: 'border-lime-400',
@@ -105,6 +119,7 @@ export const typeStyles: Record<
     bg: 'bg-lime-50',
     from: 'from-lime-400',
     to: 'to-green-200',
+    solid: 'bg-lime-500',
   },
   ghost: {
     border: 'border-violet-400',
@@ -112,6 +127,7 @@ export const typeStyles: Record<
     bg: 'bg-violet-50',
     from: 'from-violet-400',
     to: 'to-purple-200',
+    solid: 'bg-violet-600',
   },
   steel: {
     border: 'border-slate-400',
@@ -119,6 +135,7 @@ export const typeStyles: Record<
     bg: 'bg-slate-50',
     from: 'from-slate-300',
     to: 'to-slate-100',
+    solid: 'bg-slate-500',
   },
   flying: {
     border: 'border-sky-300',
@@ -126,6 +143,7 @@ export const typeStyles: Record<
     bg: 'bg-sky-50',
     from: 'from-sky-300',
     to: 'to-indigo-200',
+    solid: 'bg-sky-400',
   },
   normal: {
     border: 'border-neutral-300',
@@ -133,6 +151,7 @@ export const typeStyles: Record<
     bg: 'bg-neutral-50',
     from: 'from-neutral-300',
     to: 'to-neutral-100',
+    solid: 'bg-neutral-400',
   },
   default: {
     border: 'border-gray-200',
@@ -140,5 +159,6 @@ export const typeStyles: Record<
     bg: 'bg-gray-50',
     from: 'from-gray-200',
     to: 'to-gray-100',
+    solid: 'bg-gray-400',
   },
 };
