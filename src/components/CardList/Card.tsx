@@ -1,6 +1,7 @@
 import type { Item } from '@/types/item';
 import Pokeball from '../ui/icons/Pokeball';
 import { typeStyles } from '@/constants/typeStyles';
+import { useSelectedItemsStore } from '@/store/store';
 
 interface Props {
   item: Item;
@@ -15,10 +16,24 @@ const Card = ({ item, onClick }: Props) => {
 
   const gradient = `bg-gradient-to-br ${primary.from} ${secondary.to}`;
 
+  const toggleItem = useSelectedItemsStore((state) => state.toggleItem);
+  const isChecked = useSelectedItemsStore((state) =>
+    state.items.some((i) => i.id === String(item.id))
+  );
+
+  const handleCheckbox = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleItem({
+      id: String(item.id),
+      name: item.name,
+      description: types.join(', '),
+      url: item.image ?? '',
+    });
+  };
   return (
     <article
       className={`
-        group bg-white rounded-2xl overflow-hidden
+        group bg-white rounded-2xl overflow-hidden relative
         border-2 border-black ${primary.border}
         shadow-sm
         transition-transform duration-300
@@ -28,6 +43,35 @@ const Card = ({ item, onClick }: Props) => {
       onClick={() => onClick(item.id)}
       data-testid={`card-${item.id}`}
     >
+      <div
+        className="absolute top-3 right-3 z-30"
+        onClick={handleCheckbox}
+        data-testid={`checkbox-${item.id}`}
+      >
+        <div
+          className={`
+            w-6 h-6 rounded-full border-2 flex items-center justify-center
+            transition-all duration-200 cursor-pointer
+            ${
+              isChecked
+                ? `${primary.solid} border-transparent shadow-md scale-110`
+                : 'border-white bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
+            }
+          `}
+        >
+          {isChecked && (
+            <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M2 6l3 3 5-5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </div>
+      </div>
       <div
         className={`relative h-50 flex items-center justify-center ${gradient}`}
       >
