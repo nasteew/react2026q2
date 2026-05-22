@@ -26,8 +26,12 @@ const Card = ({ item, onClick }: Props) => {
     toggleItem({
       id: String(item.id),
       name: item.name,
-      description: types.join(', '),
-      url: item.image ?? '',
+      types: item.types.join(' | '),
+      height: item.height,
+      weight: item.weight,
+      abilities: item.abilities.join(' | '),
+      baseExperience: item.baseExperience,
+      url: item.image,
     });
   };
   return (
@@ -51,11 +55,11 @@ const Card = ({ item, onClick }: Props) => {
         <div
           className={`
             w-6 h-6 rounded-full border-2 flex items-center justify-center
-            transition-all duration-200 cursor-pointer
+            transition-all duration-200 cursor-pointer border-white
             ${
               isChecked
                 ? `${primary.solid} border-transparent shadow-md scale-110`
-                : 'border-white bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
+                : ' bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
             }
           `}
         >
