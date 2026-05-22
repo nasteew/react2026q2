@@ -34,11 +34,15 @@ export default function PokemonDetails() {
       >
         <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
-        <img
-          src={data.image}
-          alt={data.name}
-          className="relative z-10 max-h-50 object-contain drop-shadow-xl"
-        />
+        {data.image ? (
+          <img
+            src={data.image}
+            alt={data.name}
+            className="relative z-10 max-h-50 object-contain drop-shadow-xl"
+          />
+        ) : (
+          <Pokeball className="w-20 h-20 opacity-70" />
+        )}
 
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">
           {types.map((type: string) => {
