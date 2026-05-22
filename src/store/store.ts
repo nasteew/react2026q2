@@ -1,15 +1,19 @@
 import { create } from 'zustand';
 
-interface Item {
+interface SelectedItem {
   id: string;
   name: string;
-  description: string;
+  types: string;
+  height: number;
+  weight: number;
+  abilities: string;
+  baseExperience: number;
   url: string;
 }
 
 interface SelectedItemsStore {
-  items: Item[];
-  toggleItem: (item: Item) => void;
+  items: SelectedItem[];
+  toggleItem: (item: SelectedItem) => void;
   unselectAll: () => void;
 }
 
