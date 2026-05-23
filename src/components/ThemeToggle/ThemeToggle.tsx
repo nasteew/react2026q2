@@ -11,7 +11,7 @@ const ThemeToggle = () => {
       aria-label="Toggle theme"
       className="
         relative w-16 h-8 rounded-full
-        bg-gradient-to-r from-blue-200 to-sky-300
+        bg-gradient-to-r from-blue-100 to-sky-400
         dark:from-gray-900 dark:to-indigo-950
         border-2 border-black shadow-md
         hover:scale-105 active:scale-95
