@@ -34,13 +34,14 @@ const Card = ({ item, onClick }: Props) => {
       url: item.image,
     });
   };
+
   return (
     <article
       className={`
-        group bg-white rounded-2xl overflow-hidden relative
+        group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden relative
         border-2 border-black ${primary.border}
         shadow-sm
-        transition-transform duration-300
+        transition-all duration-300
         hover:shadow-lg hover:-translate-y-1
         cursor-pointer
       `}
@@ -59,7 +60,7 @@ const Card = ({ item, onClick }: Props) => {
             ${
               isChecked
                 ? `${primary.solid} border-transparent shadow-md scale-110`
-                : ' bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
+                : 'bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
             }
           `}
         >
@@ -76,6 +77,7 @@ const Card = ({ item, onClick }: Props) => {
           )}
         </div>
       </div>
+
       <div
         className={`relative h-50 flex items-center justify-center ${gradient}`}
       >
@@ -97,7 +99,6 @@ const Card = ({ item, onClick }: Props) => {
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">
           {types.map((type) => {
             const style = typeStyles[type] || typeStyles.default;
-
             return (
               <div
                 key={type}
@@ -114,23 +115,28 @@ const Card = ({ item, onClick }: Props) => {
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 capitalize truncate">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize truncate">
           {item.name}
         </h3>
 
         <div className={`my-2 border-t ${primary.border}`} />
 
-        <p className="text-sm text-gray-600">Types: {types.join(', ')}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Types: {types.join(', ')}
+        </p>
 
-        <div className="mt-2 text-sm text-gray-600">
+        <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex flex-col gap-1">
             <div className="flex gap-2">
-              <span className="font-semibold">Height:</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">
+                Height:
+              </span>
               <span>{item.height}</span>
             </div>
-
             <div className="flex gap-2">
-              <span className="font-semibold">Weight:</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">
+                Weight:
+              </span>
               <span>{item.weight}</span>
             </div>
           </div>
