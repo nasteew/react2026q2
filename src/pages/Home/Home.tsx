@@ -9,15 +9,15 @@ import Pagination from '@/components/Pagination/Pagination';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Button from '@/components/ui/Button/Button';
 import { usePokemonListQuery } from '@/hooks/usePokemonListQuery';
+import Flyout from '@/components/Flyout/Flyout';
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
 export function Home() {
   const [searchTerm, setSearchTerm] = useLocalStorage();
   const [params, setParams] = useSearchParams();
 
   const search = params.get('search') || '';
-
   const page = params.get('page') || '1';
-
   const details = params.get('details');
   const isDetailOpen = Boolean(details);
 
@@ -30,11 +30,8 @@ export function Home() {
 
   const handleSubmit = () => {
     const trimmed = query.trim();
-
     if (trimmed === search.trim()) return;
-
     setSearchTerm(trimmed);
-
     if (trimmed) {
       setParams({ search: trimmed, page: '1' });
     } else {
@@ -47,28 +44,20 @@ export function Home() {
       page: String(page),
       details: String(id),
     };
-
     if (search) next.search = search;
-
     setParams(next);
   };
 
   const handleCloseDetails = () => {
     const next: Record<string, string> = { page: String(page) };
-
     if (search) next.search = search;
-
     setParams(next);
   };
 
   const handlePageChange = (newPage: number) => {
-    const next: Record<string, string> = {
-      page: String(newPage),
-    };
-
+    const next: Record<string, string> = { page: String(newPage) };
     if (search) next.search = search;
     if (details) next.details = details;
-
     setParams(next);
   };
 
@@ -76,20 +65,26 @@ export function Home() {
     !search && !loading && !error && data && data.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="px-2 py-3 flex flex-col sm:flex-row sm:items-center bg-red-500 shadow-lg">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+      <header
+        className="
+        px-2 py-3 flex flex-col sm:flex-row sm:items-center gap-2
+        bg-red-500 dark:bg-red-950
+        shadow-lg transition-colors duration-300
+      "
+      >
         <nav className="flex-shrink-0">
           <Link
             to="/about"
             aria-label="About page"
-            className={`
-    inline-flex items-center px-5 py-2 rounded-xl
-    border-2 border-black shadow-lg font-semibold text-white
-    bg-red-700 hover:bg-red-700
-    active:scale-95 transform transition-transform duration-150 ease-out
-    hover:scale-105 hover:shadow-xl
-    focus:outline-none focus:ring-2
-  `}
+            className="
+              inline-flex items-center px-5 py-2 rounded-xl
+              border-2 border-black shadow-lg font-semibold text-white
+              bg-red-700 dark:bg-red-900
+              active:scale-95 transform transition-all duration-150 ease-out
+              hover:scale-105 hover:shadow-xl
+              focus:outline-none focus:ring-2
+            "
           >
             <span className="text-sm">About →</span>
           </Link>
@@ -98,6 +93,8 @@ export function Home() {
         <div className="flex-1 w-full">
           <Search value={query} onChange={setQuery} onSubmit={handleSubmit} />
         </div>
+
+        <ThemeToggle />
       </header>
 
       <main
@@ -126,10 +123,24 @@ export function Home() {
           </div>
 
           {isDetailOpen && (
-            <div className="w-1/2 sticky top-4 max-h-[calc(100vh-6rem)] overflow-y-auto bg-white shadow-2xl rounded-2xl">
+            <div
+              className="
+              w-1/2 sticky top-4
+              max-h-[calc(100vh-6rem)] overflow-y-auto
+              bg-white dark:bg-gray-800
+              shadow-2xl rounded-2xl
+              transition-colors duration-300
+            "
+            >
               <Button
                 onClick={handleCloseDetails}
-                className="absolute top-3 right-3 z-10 text-black px-3 py-2 rounded-lg border border-black bg-red-800"
+                className="
+                  absolute top-3 right-3 z-10
+                  px-3 py-2 rounded-lg
+                  border border-black
+                  bg-red-800 dark:bg-red-950
+                  text-white
+                "
                 label="✕"
               />
               <Outlet />
@@ -137,6 +148,7 @@ export function Home() {
           )}
         </div>
       </main>
+
       {showPagination && (
         <Pagination
           page={Number(page)}
@@ -144,6 +156,9 @@ export function Home() {
           totalPages={totalPages}
         />
       )}
+
+      <Flyout />
+
       <div className="flex justify-end p-4">
         <ErrorButton />
       </div>
