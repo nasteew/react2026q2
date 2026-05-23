@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link, Outlet, useSearchParams } from 'react-router-dom';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import Search from '@/components/Search/Search';
@@ -21,15 +21,15 @@ export function Home() {
   const details = params.get('details');
   const isDetailOpen = Boolean(details);
 
-  const [query, setQuery] = useState(search || searchTerm);
+  const [inputValue, setInputValue] = useState(searchTerm);
 
   const { data, loading, error, totalPages } = usePokemonListQuery(
     Number(page),
     search
   );
 
-  const handleSubmit = () => {
-    const trimmed = query.trim();
+  const handleSubmit = useCallback(() => {
+    const trimmed = inputValue.trim();
     if (trimmed === search.trim()) return;
     setSearchTerm(trimmed);
     if (trimmed) {
@@ -37,29 +37,35 @@ export function Home() {
     } else {
       setParams({ page: '1' });
     }
-  };
+  }, [inputValue, search, setSearchTerm, setParams]);
 
-  const handleCardClick = (id: number) => {
-    const next: Record<string, string> = {
-      page: String(page),
-      details: String(id),
-    };
-    if (search) next.search = search;
-    setParams(next);
-  };
+  const handleCardClick = useCallback(
+    (id: number) => {
+      const next: Record<string, string> = {
+        page: String(page),
+        details: String(id),
+      };
+      if (search) next.search = search;
+      setParams(next);
+    },
+    [page, search, setParams]
+  );
 
-  const handleCloseDetails = () => {
+  const handleCloseDetails = useCallback(() => {
     const next: Record<string, string> = { page: String(page) };
     if (search) next.search = search;
     setParams(next);
-  };
+  }, [page, search, setParams]);
 
-  const handlePageChange = (newPage: number) => {
-    const next: Record<string, string> = { page: String(newPage) };
-    if (search) next.search = search;
-    if (details) next.details = details;
-    setParams(next);
-  };
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      const next: Record<string, string> = { page: String(newPage) };
+      if (search) next.search = search;
+      if (details) next.details = details;
+      setParams(next);
+    },
+    [search, details, setParams]
+  );
 
   const showPagination =
     !search && !loading && !error && data && data.length > 0;
@@ -91,7 +97,11 @@ export function Home() {
         </nav>
 
         <div className="flex-1 w-full">
-          <Search value={query} onChange={setQuery} onSubmit={handleSubmit} />
+          <Search
+            value={inputValue}
+            onChange={setInputValue}
+            onSubmit={handleSubmit}
+          />
         </div>
 
         <ThemeToggle />
