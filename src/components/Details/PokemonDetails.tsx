@@ -14,7 +14,7 @@ export default function PokemonDetails() {
   if (!id) return <ErrorMessage message="Pokemon not found" />;
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error} />;
-  if (!data) return <ErrorMessage message="Something went wrong" />;
+  if (!data) return null;
 
   const types = data.types;
   const primary = typeStyles[types[0]] || typeStyles.default;
@@ -25,8 +25,9 @@ export default function PokemonDetails() {
   return (
     <div
       className={`
-        bg-white rounded-2xl overflow-hidden border-2 border-black
-        ${primary.border} shadow-lg
+        bg-white dark:bg-gray-800 rounded-2xl overflow-hidden
+        border-2 border-black ${primary.border}
+        shadow-lg transition-colors duration-300
       `}
     >
       <div
@@ -47,7 +48,6 @@ export default function PokemonDetails() {
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">
           {types.map((type: string) => {
             const style = typeStyles[type] || typeStyles.default;
-
             return (
               <div
                 key={type}
@@ -64,33 +64,39 @@ export default function PokemonDetails() {
       </div>
 
       <div className="p-5 space-y-4">
-        <h2 className="text-2xl font-bold capitalize text-gray-900">
+        <h2 className="text-2xl font-bold capitalize text-gray-900 dark:text-gray-100">
           {data.name}
         </h2>
 
         <div className={`border-t ${primary.border}`} />
 
-        <div className="text-sm text-gray-700 space-y-2">
+        <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
           <div className="flex gap-2">
-            <span className="font-semibold">Height:</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Height:
+            </span>
             <span>{data.height}</span>
           </div>
-
           <div className="flex gap-2">
-            <span className="font-semibold">Weight:</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Weight:
+            </span>
             <span>{data.weight}</span>
           </div>
-
           <div className="flex gap-2">
-            <span className="font-semibold">Base XP:</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Base XP:
+            </span>
             <span>{data.baseExperience}</span>
           </div>
         </div>
 
         {data.abilities && data.abilities.length > 0 && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Abilities</h3>
-            <ul className="list-disc list-inside text-sm text-gray-700">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Abilities
+            </h3>
+            <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300">
               {data.abilities.map((a: string) => (
                 <li key={a}>{a}</li>
               ))}
@@ -100,12 +106,19 @@ export default function PokemonDetails() {
 
         {data.stats && data.stats.length > 0 && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Stats</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Stats
+            </h3>
             <div className="space-y-1">
               {data.stats.map((s: { name: string; value: number }) => (
-                <div key={s.name} className="flex justify-between text-sm">
+                <div
+                  key={s.name}
+                  className="flex justify-between text-sm text-gray-700 dark:text-gray-300"
+                >
                   <span className="capitalize">{s.name}</span>
-                  <span className="font-semibold">{s.value}</span>
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    {s.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -114,12 +127,14 @@ export default function PokemonDetails() {
 
         {data.moves && data.moves.length > 0 && (
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Moves</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Moves
+            </h3>
             <div className="flex flex-wrap gap-2 text-xs">
               {data.moves.slice(0, 20).map((m: string) => (
                 <span
                   key={m}
-                  className="px-2 py-1 bg-gray-200 rounded-full border border-black/20"
+                  className="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full border border-black/20 dark:border-white/10"
                 >
                   {m}
                 </span>
