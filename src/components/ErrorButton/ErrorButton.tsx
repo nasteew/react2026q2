@@ -13,7 +13,7 @@ function ErrorButton() {
       onClick={() => setShouldThrow(true)}
       label="Trigger Error"
       ariaLabel="Simulate error"
-      className="bg-red-700 focus:ring-red-300 px-5 py-2"
+      className="bg-red-700 dark:bg-red-900 focus:ring-red-300 px-5 py-2 text-white"
     />
   );
 }
