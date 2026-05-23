@@ -65,7 +65,7 @@ export function Home() {
     !search && !loading && !error && data && data.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen transition-colors duration-300">
       <header
         className="
         px-2 py-3 flex flex-col sm:flex-row sm:items-center gap-2
@@ -138,7 +138,7 @@ export function Home() {
                   absolute top-3 right-3 z-10
                   px-3 py-2 rounded-lg
                   border border-black
-                  bg-red-800 dark:bg-red-950
+                  bg-red-700 dark:bg-red-900
                   text-white
                 "
                 label="✕"
