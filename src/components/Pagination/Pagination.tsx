@@ -16,17 +16,24 @@ function Pagination({ page, totalPages, onChange }: PaginationProps) {
         label="<"
         ariaLabel="Previous page"
         disabled={page === 1}
-        className={`
-          bg-red-600 text-white px-3 py-2 text-sm
+        className="
+          bg-red-700 dark:bg-red-900 text-white px-3 py-2 text-sm
           border-2 border-black shadow-md
-          hover:bg-red-700 hover:scale-105
-          active:scale-95
+          hover:scale-105 active:scale-95
           disabled:opacity-50 disabled:cursor-not-allowed
-        `}
+        "
         type="button"
       />
 
-      <span className="px-3 py-1 bg-white rounded-lg border-2 border-black shadow-sm text-sm">
+      <span
+        className="
+        px-3 py-1 rounded-lg text-sm
+        bg-white dark:bg-gray-800
+        text-gray-900 dark:text-gray-100
+        border-2 border-black dark:border-gray-600
+        shadow-sm
+      "
+      >
         {page} / {totalPages}
       </span>
 
@@ -35,13 +42,12 @@ function Pagination({ page, totalPages, onChange }: PaginationProps) {
         label=">"
         ariaLabel="Next page"
         disabled={isLastPage}
-        className={`
-          bg-red-600 text-white px-3 py-2 text-sm
+        className="
+          bg-red-700 dark:bg-red-900 text-white px-3 py-2 text-sm
           border-2 border-black shadow-md
-          hover:bg-red-700 hover:scale-105
-          active:scale-95
+          hover:scale-105 active:scale-95
           disabled:opacity-50 disabled:cursor-not-allowed
-        `}
+        "
         type="button"
       />
     </div>
