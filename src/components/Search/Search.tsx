@@ -29,7 +29,14 @@ function Search({ value, onChange, onSubmit }: Props) {
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full border-2 border-black rounded-md px-3 py-2 pl-12 bg-white text-sm placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-white transition"
+          className="
+            w-full border-2 border-black rounded-md px-3 py-2 pl-12
+            bg-white dark:bg-gray-800
+            text-sm text-gray-900 dark:text-gray-100
+            placeholder-gray-600 dark:placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-white dark:focus:ring-gray-600
+            transition-colors duration-200
+          "
           placeholder="Enter Pokémon name..."
           aria-label="Enter Pokémon name"
         />
@@ -38,7 +45,7 @@ function Search({ value, onChange, onSubmit }: Props) {
       <Button
         onClick={onSubmit}
         label="Search"
-        className="bg-red-700 focus:ring-white px-5 py-2"
+        className="text-white bg-red-700 dark:bg-red-900 focus:ring-white px-5 py-2"
       />
     </form>
   );
