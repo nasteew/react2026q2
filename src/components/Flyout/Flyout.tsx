@@ -72,10 +72,10 @@ const Flyout = () => {
 
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-bold text-gray-800 dark:text-gray-100">
-            Selected{' '}
+            Selected
             <span className="text-red-500 dark:text-red-400">
               {items.length}
-            </span>{' '}
+            </span>
             {items.length === 1 ? 'item' : 'items'}
           </span>
           <span className="text-xs text-gray-400 dark:text-gray-500">
