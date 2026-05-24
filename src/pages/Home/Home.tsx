@@ -108,7 +108,7 @@ export function Home() {
       </header>
 
       <main
-        className={`p-4 transition-all duration-300 ${
+        className={`p-3 transition-all duration-300 ${
           isDetailOpen ? '' : 'max-w-5xl mx-auto'
         }`}
       >

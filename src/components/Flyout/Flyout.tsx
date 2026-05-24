@@ -53,7 +53,7 @@ const Flyout = () => {
   return (
     <div
       className="
-    fixed bottom-4 left-1/2 -translate-x-1/2 z-50
+    fixed bottom-2 left-1/2 -translate-x-1/2 z-50
     animate-slide-up
     w-full max-w-[90vw] sm:max-w-max
   "
