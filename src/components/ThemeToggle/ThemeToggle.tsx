@@ -1,9 +1,8 @@
-import { useContext } from 'react';
-import { ThemeContext } from '@/context/ThemeContext';
 import Pokeball from '@/components/ui/icons/Pokeball';
+import { useTheme } from '@/hooks/useTheme';
 
 const ThemeToggle = () => {
-  const { toggleTheme } = useContext(ThemeContext);
+  const { toggleTheme } = useTheme();
 
   return (
     <button
