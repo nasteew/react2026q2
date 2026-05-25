@@ -55,6 +55,7 @@ const Card = ({ item, onClick }: Props) => {
                 url: item.image,
               })
             }
+            data-testid={`checkbox-input-${item.id}`}
             className="sr-only"
           />
 

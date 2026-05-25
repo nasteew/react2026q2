@@ -38,8 +38,11 @@ describe('Card', () => {
 
   it('calls onClick when card is clicked', async () => {
     const onClick = vi.fn();
+
     render(<Card item={mockItem} onClick={onClick} />);
-    await userEvent.click(screen.getByRole('article'));
+
+    await userEvent.click(screen.getByTestId(`card-${mockItem.id}`));
+
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledWith(mockItem.id);
   });
@@ -51,7 +54,7 @@ describe('Card', () => {
 
   it('adds item to store when checkbox is clicked', async () => {
     render(<Card item={mockItem} onClick={() => {}} />);
-    await userEvent.click(screen.getByTestId(`checkbox-${mockItem.id}`));
+    await userEvent.click(screen.getByTestId(`checkbox-input-${mockItem.id}`));
     expect(useSelectedItemsStore.getState().items).toHaveLength(1);
     expect(useSelectedItemsStore.getState().items[0].id).toBe(
       String(mockItem.id)
@@ -60,19 +63,26 @@ describe('Card', () => {
 
   it('removes item from store when checkbox is clicked again', async () => {
     render(<Card item={mockItem} onClick={() => {}} />);
-    await userEvent.click(screen.getByTestId(`checkbox-${mockItem.id}`));
-    await userEvent.click(screen.getByTestId(`checkbox-${mockItem.id}`));
+
+    const checkbox = screen.getByTestId(`checkbox-input-${mockItem.id}`);
+
+    await userEvent.click(checkbox);
+    await userEvent.click(checkbox);
+
     expect(useSelectedItemsStore.getState().items).toHaveLength(0);
   });
 
   it('does not call onClick when checkbox is clicked', async () => {
     const onClick = vi.fn();
+
     render(<Card item={mockItem} onClick={onClick} />);
-    await userEvent.click(screen.getByTestId(`checkbox-${mockItem.id}`));
+
+    await userEvent.click(screen.getByTestId(`checkbox-input-${mockItem.id}`));
+
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('shows checkmark when item is selected', async () => {
+  it('shows checkmark when item is selected', () => {
     useSelectedItemsStore.setState({
       items: [
         {
@@ -87,7 +97,9 @@ describe('Card', () => {
         },
       ],
     });
+
     render(<Card item={mockItem} onClick={() => {}} />);
+
     expect(
       screen.getByTestId(`checkbox-${mockItem.id}`).querySelector('svg')
     ).toBeInTheDocument();
