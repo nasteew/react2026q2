@@ -21,20 +21,6 @@ const Card = ({ item, onClick }: Props) => {
     state.items.some((i) => i.id === String(item.id))
   );
 
-  const handleCheckbox = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleItem({
-      id: String(item.id),
-      name: item.name,
-      types: item.types.join(' | '),
-      height: item.height,
-      weight: item.weight,
-      abilities: item.abilities.join(' | '),
-      baseExperience: item.baseExperience,
-      url: item.image,
-    });
-  };
-
   return (
     <article
       className={`
@@ -50,32 +36,56 @@ const Card = ({ item, onClick }: Props) => {
     >
       <div
         className="absolute top-3 right-3 z-30"
-        onClick={handleCheckbox}
+        onClick={(e) => e.stopPropagation()}
         data-testid={`checkbox-${item.id}`}
       >
-        <div
-          className={`
-            w-6 h-6 rounded-full border-2 flex items-center justify-center
-            transition-all duration-200 cursor-pointer border-white
-            ${
-              isChecked
-                ? `${primary.solid} border-transparent shadow-md scale-110`
-                : 'bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
+        <label className="cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={() =>
+              toggleItem({
+                id: String(item.id),
+                name: item.name,
+                types: item.types.join(' | '),
+                height: item.height,
+                weight: item.weight,
+                abilities: item.abilities.join(' | '),
+                baseExperience: item.baseExperience,
+                url: item.image,
+              })
             }
-          `}
-        >
-          {isChecked && (
-            <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
-              <path
-                d="M2 6l3 3 5-5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
-        </div>
+            className="sr-only"
+          />
+
+          <div
+            className={`
+        w-6 h-6 rounded-full border-2 flex items-center justify-center
+        transition-all duration-200 border-white
+        ${
+          isChecked
+            ? `${primary.solid} border-transparent shadow-md scale-110`
+            : 'bg-white/70 hover:bg-white hover:scale-110 backdrop-blur-sm'
+        }
+      `}
+          >
+            {isChecked && (
+              <svg
+                className="w-3 h-3 text-white"
+                viewBox="0 0 12 12"
+                fill="none"
+              >
+                <path
+                  d="M2 6l3 3 5-5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </div>
+        </label>
       </div>
 
       <div
