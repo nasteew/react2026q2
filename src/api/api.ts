@@ -11,16 +11,23 @@ export async function fetchPokemonList(
   const limit = 12;
   const offset = (page - 1) * limit;
 
-  const data = await request<{ results: PokemonListItem[]; count: number }>(
-    `${BASE_URL}?limit=${limit}&offset=${offset}`,
-    { signal }
-  );
+  try {
+    const data = await request<{ results: PokemonListItem[]; count: number }>(
+      `${BASE_URL}?limit=${limit}&offset=${offset}`,
+      { signal }
+    );
 
-  const items = await Promise.all(
-    data.results.map((pokemon) => fetchPokemon(pokemon.name, signal))
-  );
+    const items = await Promise.all(
+      data.results.map((pokemon) => fetchPokemon(pokemon.name, signal))
+    );
 
-  return { items, totalPages: Math.ceil(data.count / limit) };
+    return { items, totalPages: Math.ceil(data.count / limit) };
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') throw error;
+    if (error instanceof Error && error.message.includes('Server error'))
+      throw error;
+    throw new Error('Failed to load Pokémon list. Please try again.');
+  }
 }
 
 export async function fetchPokemon(
