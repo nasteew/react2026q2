@@ -13,7 +13,7 @@ import Flyout from '@/components/Flyout/Flyout';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
 export function Home() {
-  const [searchTerm, setSearchTerm] = useLocalStorage();
+  const [searchTerm, setSearchTerm] = useLocalStorage('searchTerm', '');
   const [params, setParams] = useSearchParams();
 
   const search = params.get('search') || '';

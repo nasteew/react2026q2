@@ -1,25 +1,29 @@
 import { useState } from 'react';
 
-const SEARCH_KEY = 'searchTerm';
+function useLocalStorage<T>(
+  key: string,
+  initialValue: T
+): [T, (val: T) => void, () => void] {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
 
-type UseLocalStorageReturn = [string, (value: string) => void, () => void];
-
-function useLocalStorage(): UseLocalStorageReturn {
-  const [searchTerm, setSearchTerm] = useState(
-    () => localStorage.getItem(SEARCH_KEY) ?? ''
-  );
-
-  const setValue = (value: string) => {
-    setSearchTerm(value);
-    localStorage.setItem(SEARCH_KEY, value);
+  const setValue = (value: T) => {
+    setStoredValue(value);
+    localStorage.setItem(key, JSON.stringify(value));
   };
 
   const clearValue = () => {
-    setSearchTerm('');
-    localStorage.removeItem(SEARCH_KEY);
+    setStoredValue(initialValue);
+    localStorage.removeItem(key);
   };
 
-  return [searchTerm, setValue, clearValue];
+  return [storedValue, setValue, clearValue];
 }
 
 export default useLocalStorage;
