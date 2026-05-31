@@ -8,28 +8,28 @@ describe('useLocalStorage', () => {
 
   describe('initial value', () => {
     it('returns empty string when localStorage is empty', () => {
-      const { result } = renderHook(() => useLocalStorage());
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       expect(result.current[0]).toBe('');
     });
 
     it('returns stored value when localStorage has data', () => {
-      localStorage.setItem('searchTerm', 'pikachu');
-      const { result } = renderHook(() => useLocalStorage());
+      localStorage.setItem('searchTerm', JSON.stringify('pikachu'));
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       expect(result.current[0]).toBe('pikachu');
     });
   });
 
   describe('setValue', () => {
     it('saves value to localStorage', () => {
-      const { result } = renderHook(() => useLocalStorage());
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       act(() => {
         result.current[1]('bulbasaur');
       });
-      expect(localStorage.getItem('searchTerm')).toBe('bulbasaur');
+      expect(JSON.parse(localStorage.getItem('searchTerm')!)).toBe('bulbasaur');
     });
 
     it('updates state value', () => {
-      const { result } = renderHook(() => useLocalStorage());
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       act(() => {
         result.current[1]('bulbasaur');
       });
@@ -39,8 +39,8 @@ describe('useLocalStorage', () => {
 
   describe('clearValue', () => {
     it('removes value from localStorage', () => {
-      localStorage.setItem('searchTerm', 'charmander');
-      const { result } = renderHook(() => useLocalStorage());
+      localStorage.setItem('searchTerm', JSON.stringify('charmander'));
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       act(() => {
         result.current[2]();
       });
@@ -48,8 +48,8 @@ describe('useLocalStorage', () => {
     });
 
     it('resets state to empty string', () => {
-      localStorage.setItem('searchTerm', 'charmander');
-      const { result } = renderHook(() => useLocalStorage());
+      localStorage.setItem('searchTerm', JSON.stringify('charmander'));
+      const { result } = renderHook(() => useLocalStorage('searchTerm', ''));
       act(() => {
         result.current[2]();
       });
