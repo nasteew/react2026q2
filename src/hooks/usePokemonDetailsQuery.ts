@@ -25,7 +25,7 @@ export function usePokemonDetailsQuery(id: string | null) {
       setState({ data: null, loading: true, error: null });
 
       try {
-        const data = await fetchPokemon(id);
+        const data = await fetchPokemon(id, controller.signal);
 
         if (!controller.signal.aborted) {
           setState({ data, loading: false, error: null });

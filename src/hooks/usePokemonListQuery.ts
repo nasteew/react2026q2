@@ -40,7 +40,7 @@ export function usePokemonListQuery(page: number, search: string) {
         }
 
         if (search) {
-          const pokemon = await fetchPokemon(search);
+          const pokemon = await fetchPokemon(search, controller.signal);
 
           if (!controller.signal.aborted) {
             setState({
@@ -54,7 +54,10 @@ export function usePokemonListQuery(page: number, search: string) {
           return;
         }
 
-        const { items, count } = await fetchPokemonList(page);
+        const { items, count } = await fetchPokemonList(
+          page,
+          controller.signal
+        );
         const limit = 12;
         const totalPages = Math.ceil(count / limit);
 
