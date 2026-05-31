@@ -10,9 +10,12 @@ export function usePokemonListQuery(page: number, search: string) {
       ? ['pokemon', 'search', search]
       : ['pokemon', 'list', page],
     queryFn: isSearch
-      ? () =>
-          fetchPokemon(search).then((p) => ({ items: [p], count: 1, limit: 1 }))
-      : () => fetchPokemonList(page),
+      ? ({ signal }) =>
+          fetchPokemon(search, signal).then((p) => ({
+            items: [p],
+            totalPages: 1,
+          }))
+      : ({ signal }) => fetchPokemonList(page, signal),
   });
 
   const invalidate = () =>
@@ -21,8 +24,6 @@ export function usePokemonListQuery(page: number, search: string) {
         ? ['pokemon', 'search', search]
         : ['pokemon', 'list', page],
     });
-
-  const limit = query.data?.limit ?? 1;
 
   return {
     data: query.data?.items ?? [],
@@ -33,11 +34,7 @@ export function usePokemonListQuery(page: number, search: string) {
         : query.isError
           ? 'Unknown error'
           : '',
-    totalPages: isSearch
-      ? 1
-      : query.data
-        ? Math.ceil(query.data.count / limit)
-        : 1,
+    totalPages: query.data?.totalPages ?? 1,
     invalidate,
   };
 }
