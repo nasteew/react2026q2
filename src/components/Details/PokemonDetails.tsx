@@ -4,12 +4,13 @@ import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Pokeball from '@/components/ui/icons/Pokeball';
 import { typeStyles } from '@/constants/typeStyles';
 import { usePokemonDetailsQuery } from '@/hooks/usePokemonDetailsQuery';
+import Button from '../ui/Button/Button';
 
 export default function PokemonDetails() {
   const [params] = useSearchParams();
   const id = params.get('details');
 
-  const { data, loading, error } = usePokemonDetailsQuery(id);
+  const { data, loading, error, invalidate } = usePokemonDetailsQuery(id);
 
   if (!id) return <ErrorMessage message="Pokemon not found" />;
   if (loading) return <Loader />;
@@ -64,10 +65,26 @@ export default function PokemonDetails() {
       </div>
 
       <div className="p-5 space-y-4">
-        <h2 className="text-2xl font-bold capitalize text-gray-900 dark:text-gray-100">
-          {data.name}
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold capitalize text-gray-900 dark:text-gray-100">
+            {data.name}
+          </h2>
 
+          <div className="flex justify-start mb-3">
+            <Button
+              onClick={invalidate}
+              label="Refresh"
+              className="
+        px-4 py-2 rounded-lg
+        bg-blue-600 dark:bg-blue-800
+        text-white font-semibold
+        border border-black
+        shadow-md
+        hover:scale-105 transition-transform
+      "
+            />
+          </div>
+        </div>
         <div className={`border-t ${primary.border}`} />
 
         <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
