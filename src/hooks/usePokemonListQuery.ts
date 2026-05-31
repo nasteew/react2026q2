@@ -1,91 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchPokemonList, fetchPokemon } from '@/api/api';
-import type { Item } from '@/types/item';
-
-type PokemonListState = {
-  data: Item[];
-  loading: boolean;
-  error: string;
-  totalPages: number;
-  page: number;
-};
-
-const initialState: PokemonListState = {
-  data: [],
-  loading: false,
-  error: '',
-  totalPages: 1,
-  page: 1,
-};
 
 export function usePokemonListQuery(page: number, search: string) {
-  const [state, setState] = useState<PokemonListState>(initialState);
+  const queryClient = useQueryClient();
+  const isSearch = Boolean(search);
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const query = useQuery({
+    queryKey: isSearch
+      ? ['pokemon', 'search', search]
+      : ['pokemon', 'list', page],
+    queryFn: isSearch
+      ? () =>
+          fetchPokemon(search).then((p) => ({ items: [p], count: 1, limit: 1 }))
+      : () => fetchPokemonList(page),
+  });
 
-    async function load() {
-      try {
-        setState((prev) => ({ ...prev, loading: true, error: '' }));
+  const invalidate = () =>
+    void queryClient.invalidateQueries({
+      queryKey: isSearch
+        ? ['pokemon', 'search', search]
+        : ['pokemon', 'list', page],
+    });
 
-        if (page < 1) {
-          setState({
-            data: [],
-            loading: false,
-            error: '',
-            totalPages: 1,
-            page,
-          });
-          return;
-        }
+  const limit = query.data?.limit ?? 1;
 
-        if (search) {
-          const pokemon = await fetchPokemon(search, controller.signal);
-
-          if (!controller.signal.aborted) {
-            setState({
-              data: [pokemon],
-              loading: false,
-              error: '',
-              totalPages: 1,
-              page: 1,
-            });
-          }
-          return;
-        }
-
-        const { items, count } = await fetchPokemonList(
-          page,
-          controller.signal
-        );
-        const limit = 12;
-        const totalPages = Math.ceil(count / limit);
-
-        if (!controller.signal.aborted) {
-          setState({
-            data: items,
-            loading: false,
-            error: '',
-            totalPages,
-            page,
-          });
-        }
-      } catch (err) {
-        if (!controller.signal.aborted && err instanceof Error) {
-          setState({
-            data: [],
-            loading: false,
-            error: err.message,
-            totalPages: 1,
-            page: 1,
-          });
-        }
-      }
-    }
-
-    load();
-    return () => controller.abort();
-  }, [page, search]);
-
-  return state;
+  return {
+    data: query.data?.items ?? [],
+    loading: query.isLoading || query.isFetching,
+    error:
+      query.error instanceof Error
+        ? query.error.message
+        : query.isError
+          ? 'Unknown error'
+          : '',
+    totalPages: isSearch
+      ? 1
+      : query.data
+        ? Math.ceil(query.data.count / limit)
+        : 1,
+    invalidate,
+  };
 }
