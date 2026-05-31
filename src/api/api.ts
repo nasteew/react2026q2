@@ -7,7 +7,7 @@ import type { PokemonTypeEntry } from '@/types/pokemonType';
 export async function fetchPokemonList(
   page: number,
   signal?: AbortSignal
-): Promise<{ items: Item[]; count: number }> {
+): Promise<{ items: Item[]; totalPages: number }> {
   const limit = 12;
   const offset = (page - 1) * limit;
 
@@ -20,7 +20,7 @@ export async function fetchPokemonList(
     data.results.map((pokemon) => fetchPokemon(pokemon.name, signal))
   );
 
-  return { items, count: data.count };
+  return { items, totalPages: Math.ceil(data.count / limit) };
 }
 
 export async function fetchPokemon(
