@@ -1,50 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchPokemon } from '@/api/api';
-import type { Item } from '@/types/item';
-
-type PokemonDetailsState = {
-  data: Item | null;
-  loading: boolean;
-  error: string | null;
-};
-
-const initialState: PokemonDetailsState = {
-  data: null,
-  loading: false,
-  error: null,
-};
 
 export function usePokemonDetailsQuery(id: string | null) {
-  const [state, setState] = useState<PokemonDetailsState>(initialState);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (!id) return;
-    const controller = new AbortController();
+  const query = useQuery({
+    queryKey: ['pokemon', 'detail', id],
+    queryFn: ({ signal }) => fetchPokemon(id!, signal),
+    enabled: Boolean(id),
+  });
 
-    const fetchData = async () => {
-      setState({ data: null, loading: true, error: null });
-
-      try {
-        const data = await fetchPokemon(id, controller.signal);
-
-        if (!controller.signal.aborted) {
-          setState({ data, loading: false, error: null });
-        }
-      } catch (error) {
-        if (!controller.signal.aborted && error instanceof Error) {
-          setState({ data: null, loading: false, error: error.message });
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => controller.abort();
-  }, [id]);
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: ['pokemon', 'detail', id] });
 
   return {
-    data: state.data,
-    loading: state.loading,
-    error: state.error,
+    data: query.data ?? null,
+    loading: query.isLoading || query.isFetching,
+    error:
+      query.error instanceof Error
+        ? query.error.message
+        : query.isError
+          ? 'Unknown error'
+          : null,
+    invalidate,
   };
 }
