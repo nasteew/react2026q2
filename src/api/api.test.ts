@@ -39,7 +39,6 @@ describe('fetchPokemon', () => {
         HttpResponse.json({}, { status: 404 })
       )
     );
-
     await expect(fetchPokemon('unknown')).rejects.toThrow(
       'Pokémon "unknown" not found. Try a different name!'
     );
@@ -51,7 +50,6 @@ describe('fetchPokemon', () => {
         HttpResponse.json({}, { status: 500 })
       )
     );
-
     await expect(fetchPokemon('bulbasaur')).rejects.toThrow(
       'Server error. Please try again later.'
     );
@@ -63,7 +61,6 @@ describe('fetchPokemon', () => {
         HttpResponse.json({}, { status: 400 })
       )
     );
-
     await expect(fetchPokemon('bulbasaur')).rejects.toThrow(
       'Request failed with status 400'
     );
@@ -71,19 +68,19 @@ describe('fetchPokemon', () => {
 });
 
 describe('fetchPokemonList', () => {
-  it('returns list of mapped pokemons', async () => {
+  it('returns list of mapped pokemons with totalPages', async () => {
     const result = await fetchPokemonList(1);
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].name).toBe('bulbasaur');
-    expect(result.count).toBeDefined();
+    expect(result.totalPages).toBeDefined();
+    expect(typeof result.totalPages).toBe('number');
   });
 
   it('throws server error on 500', async () => {
     server.use(
       http.get(BASE_URL, () => HttpResponse.json({}, { status: 500 }))
     );
-
     await expect(fetchPokemonList(1)).rejects.toThrow(
       'Server error. Please try again later.'
     );
@@ -93,7 +90,6 @@ describe('fetchPokemonList', () => {
     server.use(
       http.get(BASE_URL, () => HttpResponse.json({}, { status: 400 }))
     );
-
     await expect(fetchPokemonList(1)).rejects.toThrow(
       'Request failed with status 400'
     );
