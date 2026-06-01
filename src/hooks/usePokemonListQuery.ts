@@ -28,12 +28,7 @@ export function usePokemonListQuery(page: number, search: string) {
   return {
     data: query.data?.items ?? [],
     loading: query.isLoading || query.isFetching,
-    error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.isError
-          ? 'Unknown error'
-          : '',
+    error: query.error instanceof Error ? query.error.message : '',
     totalPages: query.data?.totalPages ?? 1,
     invalidate,
   };

@@ -16,12 +16,7 @@ export function usePokemonDetailsQuery(id: string | null) {
   return {
     data: query.data ?? null,
     loading: query.isLoading || query.isFetching,
-    error:
-      query.error instanceof Error
-        ? query.error.message
-        : query.isError
-          ? 'Unknown error'
-          : null,
+    error: query.error instanceof Error ? query.error.message : null,
     invalidate,
   };
 }

@@ -65,6 +65,13 @@ export async function fetchPokemon(
       throw new Error(`Pokémon "${name}" not found. Try a different name!`);
     }
 
+    if (
+      error instanceof Error &&
+      error.message === 'Request failed with status 400'
+    ) {
+      throw new Error('Please check your input and try again.');
+    }
+
     throw error;
   }
 }
