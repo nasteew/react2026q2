@@ -71,7 +71,8 @@ export async function fetchPokemon(
     ) {
       throw new Error('Please check your input and try again.');
     }
-
-    throw error;
+    if (error instanceof Error && error.message.includes('Server error'))
+      throw error;
+    throw new Error('Failed to load Pokémon.');
   }
 }
