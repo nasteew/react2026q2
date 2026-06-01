@@ -199,7 +199,7 @@ describe('usePokemonListQuery — search mode', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(spy).toHaveBeenCalledTimes(1);
 
-    act(() => result.current.invalidate());
+    await act(() => result.current.invalidate());
 
     await waitFor(() => expect(spy).toHaveBeenCalledTimes(2));
   });
@@ -285,7 +285,7 @@ describe('usePokemonDetailsQuery', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(spy).toHaveBeenCalledTimes(1);
 
-    act(() => result.current.invalidate());
+    await act(() => result.current.invalidate());
 
     await waitFor(() => expect(spy).toHaveBeenCalledTimes(2));
   });
