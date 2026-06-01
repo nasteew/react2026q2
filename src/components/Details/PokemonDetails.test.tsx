@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi } from 'vitest';
 import * as api from '@/api/api';
 import PokemonDetails from './PokemonDetails';
@@ -11,13 +12,21 @@ suppressConsoleError();
 vi.mock('@/api/api');
 const mockedApi = vi.mocked(api);
 
+function makeClient() {
+  return new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+}
+
 function renderDetails(initialEntries = ['/?details=1']) {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
-      <Routes>
-        <Route path="/" element={<PokemonDetails />} />
-      </Routes>
-    </MemoryRouter>
+    <QueryClientProvider client={makeClient()}>
+      <MemoryRouter initialEntries={initialEntries}>
+        <Routes>
+          <Route path="/" element={<PokemonDetails />} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 }
 

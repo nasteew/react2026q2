@@ -48,6 +48,7 @@ export const handlers = [
         },
       ],
       count: 1302,
+      limit: 12,
     });
   }),
 

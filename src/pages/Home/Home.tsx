@@ -13,7 +13,7 @@ import Flyout from '@/components/Flyout/Flyout';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
 export function Home() {
-  const [searchTerm, setSearchTerm] = useLocalStorage();
+  const [searchTerm, setSearchTerm] = useLocalStorage('searchTerm', '');
   const [params, setParams] = useSearchParams();
 
   const search = params.get('search') || '';
@@ -23,7 +23,7 @@ export function Home() {
 
   const [inputValue, setInputValue] = useState(searchTerm);
 
-  const { data, loading, error, totalPages } = usePokemonListQuery(
+  const { data, loading, error, totalPages, invalidate } = usePokemonListQuery(
     Number(page),
     search
   );
@@ -120,6 +120,20 @@ export function Home() {
             }`}
             onClick={isDetailOpen ? handleCloseDetails : undefined}
           >
+            <div className="flex justify-start mb-3">
+              <Button
+                onClick={invalidate}
+                label="Refresh"
+                className="
+        px-4 py-2 rounded-lg
+        bg-blue-600 dark:bg-blue-800
+        text-white font-semibold
+        border border-black
+        shadow-md
+        hover:scale-105 transition-transform
+      "
+              />
+            </div>
             {loading && <Loader />}
             {error && <ErrorMessage message={error || 'Unknown error'} />}
 

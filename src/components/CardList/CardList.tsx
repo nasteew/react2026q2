@@ -3,7 +3,7 @@ import Card from './Card';
 
 interface Props {
   items: Item[];
-  onCardClick: (name: number) => void;
+  onCardClick: (id: number) => void;
   isDetailOpen?: boolean;
 }
 
