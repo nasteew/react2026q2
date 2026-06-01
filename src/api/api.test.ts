@@ -62,7 +62,7 @@ describe('fetchPokemon', () => {
       )
     );
     await expect(fetchPokemon('bulbasaur')).rejects.toThrow(
-      'Request failed with status 400'
+      'Please check your input and try again.'
     );
   });
 });
@@ -88,10 +88,13 @@ describe('fetchPokemonList', () => {
 
   it('throws generic error on 400', async () => {
     server.use(
-      http.get(BASE_URL, () => HttpResponse.json({}, { status: 400 }))
+      http.get(BASE_URL, () => HttpResponse.json({}, { status: 400 })),
+      http.get(`${BASE_URL}/:name`, () =>
+        HttpResponse.json({}, { status: 400 })
+      )
     );
     await expect(fetchPokemonList(1)).rejects.toThrow(
-      'Request failed with status 400'
+      'Failed to load Pokémon list. Please try again.'
     );
   });
 });

@@ -106,6 +106,23 @@ describe('usePokemonListQuery — list mode', () => {
 
     await waitFor(() => expect(spy).toHaveBeenCalledTimes(2));
   });
+
+  it('re-fetches when page changes', async () => {
+    const spy = vi.spyOn(api, 'fetchPokemonList').mockResolvedValue({
+      items: [mockItem],
+      totalPages: 5,
+    });
+    const { result, rerender } = renderHook(
+      ({ page }: { page: number }) => usePokemonListQuery(page, ''),
+      { wrapper: makeWrapper(freshClient()), initialProps: { page: 1 } }
+    );
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(spy).toHaveBeenCalledWith(1, expect.anything());
+
+    rerender({ page: 2 });
+    await waitFor(() => expect(spy).toHaveBeenCalledWith(2, expect.anything()));
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe('usePokemonListQuery — search mode', () => {
