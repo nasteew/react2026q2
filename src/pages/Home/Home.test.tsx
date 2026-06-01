@@ -328,4 +328,20 @@ describe('Home', () => {
       ).not.toBeInTheDocument();
     });
   });
+
+  it('Refresh button triggers new list fetch', async () => {
+    const spy = vi.spyOn(api, 'fetchPokemonList').mockResolvedValue({
+      items: [mockItem],
+      totalPages: 5,
+    });
+    const user = userEvent.setup();
+    renderHome();
+    await waitFor(() => screen.getByText('bulbasaur'));
+    const callsBefore = spy.mock.calls.length;
+
+    await user.click(screen.getByRole('button', { name: 'Refresh' }));
+    await waitFor(() =>
+      expect(spy.mock.calls.length).toBeGreaterThan(callsBefore)
+    );
+  });
 });
