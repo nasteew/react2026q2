@@ -12,6 +12,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base = `
+  cursor-pointer
     rounded-xl px-6 py-3 text-sm font-medium
     transition duration-150 active:scale-[0.98]
     focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-[#0a0a0a]
