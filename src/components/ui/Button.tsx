@@ -1,17 +1,16 @@
-import { type ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'primary' | 'ghost';
 }
 
-export function Button({
-  children,
-  variant = 'primary',
-  className = '',
-  ...props
-}: ButtonProps) {
-  const base = `
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button(
+    { children, variant = 'primary', className = '', ...props },
+    ref
+  ) {
+    const base = `
   cursor-pointer
     rounded-xl px-6 py-3 text-sm font-medium
     transition duration-150 active:scale-[0.98]
@@ -19,16 +18,21 @@ export function Button({
     disabled:opacity-30 disabled:cursor-not-allowed
   `;
 
-  const variants = {
-    primary:
-      'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md hover:shadow-lg disabled:hover:bg-indigo-600',
-    ghost:
-      'bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/70 hover:text-white',
-  };
+    const variants = {
+      primary:
+        'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md hover:shadow-lg disabled:hover:bg-indigo-600',
+      ghost:
+        'bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/70 hover:text-white',
+    };
 
-  return (
-    <button {...props} className={`${base} ${variants[variant]} ${className}`}>
-      {children}
-    </button>
-  );
-}
+    return (
+      <button
+        ref={ref}
+        {...props}
+        className={`${base} ${variants[variant]} ${className}`}
+      >
+        {children}
+      </button>
+    );
+  }
+);
