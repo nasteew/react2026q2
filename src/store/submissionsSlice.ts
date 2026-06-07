@@ -26,15 +26,19 @@ const submissionsSlice = createSlice({
   name: 'submissions',
   initialState,
   reducers: {
-    addSubmission: (
-      state,
-      action: PayloadAction<Omit<FormSubmission, 'id' | 'submittedAt'>>
-    ) => {
-      state.items.push({
-        ...action.payload,
-        id: crypto.randomUUID(),
-        submittedAt: Date.now(),
-      });
+    addSubmission: {
+      reducer(state, action: PayloadAction<FormSubmission>) {
+        state.items.push(action.payload);
+      },
+      prepare(data: Omit<FormSubmission, 'id' | 'submittedAt'>) {
+        return {
+          payload: {
+            ...data,
+            id: crypto.randomUUID(),
+            submittedAt: Date.now(),
+          },
+        };
+      },
     },
   },
 });
