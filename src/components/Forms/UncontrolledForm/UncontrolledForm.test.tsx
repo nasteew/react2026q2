@@ -147,7 +147,7 @@ describe('UncontrolledForm', () => {
 
     await user.type(screen.getByLabelText('Password'), VALID_PASSWORD);
 
-    expect(screen.getByText('123 number')).toHaveClass('text-emerald-400');
-    expect(screen.getByText('ABC uppercase')).toHaveClass('text-emerald-400');
+    expect(screen.getByText('1 number')).toHaveClass('text-emerald-400');
+    expect(screen.getByText('1 uppercase')).toHaveClass('text-emerald-400');
   });
 });

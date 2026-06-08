@@ -123,7 +123,9 @@ describe('RHFForm', () => {
 
     await user.type(screen.getByLabelText('Password'), VALID_PASSWORD);
 
-    expect(screen.getByText('abc lowercase')).toHaveClass('text-emerald-400');
-    expect(screen.getByText('!@# special')).toHaveClass('text-emerald-400');
+    expect(screen.getByText('1 lowercase')).toHaveClass('text-emerald-400');
+    expect(screen.getByText('1 special character')).toHaveClass(
+      'text-emerald-400'
+    );
   });
 });
