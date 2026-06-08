@@ -24,6 +24,7 @@ interface Props {
 export function UncontrolledForm({ onClose }: Props): JSX.Element {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [strength, setStrength] = useState<PasswordStrengthType | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const dispatch = useAppDispatch();
   const countries = useAppSelector(selectCountries);
@@ -35,11 +36,11 @@ export function UncontrolledForm({ onClose }: Props): JSX.Element {
 
     const formData = new FormData(form);
 
-    const imageInput = form.elements.namedItem('image');
+    const imageEntry = formData.get('image');
     const file =
-      imageInput instanceof HTMLInputElement && imageInput.files?.[0]
-        ? imageInput.files[0]
-        : null;
+      imageEntry instanceof File && imageEntry.size > 0
+        ? imageEntry
+        : imageFile;
 
     const rawData = {
       name: formData.get('name') as string,
@@ -98,6 +99,7 @@ export function UncontrolledForm({ onClose }: Props): JSX.Element {
     form.reset();
     setErrors({});
     setStrength(null);
+    setImageFile(null);
 
     onClose(action.payload.id);
   };
@@ -161,7 +163,12 @@ export function UncontrolledForm({ onClose }: Props): JSX.Element {
         error={errors.country}
       />
 
-      <FileUpload id="uc-image" name="image" error={errors.image} />
+      <FileUpload
+        id="uc-image"
+        name="image"
+        error={errors.image}
+        onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+      />
 
       <TermsCheckbox id="uc-terms" name="terms" error={errors.terms} />
 
