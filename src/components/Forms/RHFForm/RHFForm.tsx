@@ -90,12 +90,12 @@ export function RHFForm({ onClose }: Props): JSX.Element {
 
       <Input
         id="rhf-age"
-        type="number"
-        min={0}
+        type="text"
+        inputMode="numeric"
         label="Age"
         placeholder="25"
         error={errors.age?.message}
-        {...register('age', { valueAsNumber: true })}
+        {...register('age')}
       />
 
       <GenderField

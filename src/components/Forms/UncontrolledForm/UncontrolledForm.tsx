@@ -44,7 +44,7 @@ export function UncontrolledForm({ onClose }: Props): JSX.Element {
 
     const rawData = {
       name: formData.get('name') as string,
-      age: Number(formData.get('age')),
+      age: (formData.get('age') as string) ?? '',
       email: formData.get('email') as string,
       gender: formData.get('gender') as string,
       password: formData.get('password') as string,
@@ -117,8 +117,8 @@ export function UncontrolledForm({ onClose }: Props): JSX.Element {
       <Input
         id="uc-age"
         name="age"
-        type="number"
-        min={0}
+        type="text"
+        inputMode="numeric"
         label="Age"
         placeholder="25"
         error={errors.age}

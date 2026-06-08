@@ -48,6 +48,28 @@ const emailSchema = z.string().superRefine((val, ctx) => {
   }
 });
 
+function validateAge(val: string, ctx: z.RefinementCtx) {
+  const trimmed = val.trim();
+
+  if (trimmed.length === 0) {
+    ctx.addIssue({ code: 'custom', message: 'Age is required' });
+    return;
+  }
+
+  for (const char of trimmed) {
+    if (char < '0' || char > '9') {
+      ctx.addIssue({ code: 'custom', message: 'Age must be a number' });
+      return;
+    }
+  }
+
+  const num = Number(trimmed);
+
+  if (num > 120) {
+    ctx.addIssue({ code: 'custom', message: 'Age seems too high' });
+  }
+}
+
 const imageSchema = z
   .custom<File | FileList | null>(
     (val) => val === null || val instanceof File || val instanceof FileList,
@@ -93,11 +115,9 @@ export function createFormSchema(countries: string[]) {
         ),
 
       age: z
-        .number()
-        .refine((v) => !Number.isNaN(v), { message: 'Age must be a number' })
-        .int('Age must be a whole number')
-        .nonnegative('Age cannot be negative')
-        .max(120, 'Age seems too high'),
+        .string()
+        .superRefine(validateAge)
+        .transform((val) => Number(val.trim())),
 
       email: emailSchema,
 
