@@ -134,4 +134,22 @@ describe('createFormSchema', () => {
       expect(mismatch?.path).toEqual(['confirmPassword']);
     }
   });
+  it('rejects email with empty domain', () => {
+    const result = schema.safeParse({ ...validData, email: 'ada@' });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects email without domain dot', () => {
+    const result = schema.safeParse({ ...validData, email: 'ada@localhost' });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects age above 120', () => {
+    const result = schema.safeParse({ ...validData, age: '121' });
+    expect(result.success).toBe(false);
+  });
+  it('rejects email with empty domain', () => {
+    const result = schema.safeParse({ ...validData, email: 'ada@' });
+    expect(result.success).toBe(false);
+  });
 });
