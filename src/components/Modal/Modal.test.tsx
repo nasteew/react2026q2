@@ -34,6 +34,7 @@ describe('Modal', () => {
 
     const dialog = await screen.findByRole('dialog');
     expect(container).not.toContainElement(dialog);
+    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled();
     expect(screen.getByText('Form content')).toBeInTheDocument();
     expect(screen.getByText('Test Modal')).toBeInTheDocument();
   });
@@ -200,7 +201,7 @@ describe('Modal', () => {
     );
 
     const dialog = await screen.findByRole('dialog');
-    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog.tagName).toBe('DIALOG');
     expect(dialog).toHaveAttribute('aria-labelledby');
   });
 });
