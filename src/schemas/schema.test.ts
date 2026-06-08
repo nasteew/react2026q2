@@ -7,7 +7,7 @@ const schema = createFormSchema([...COUNTRIES_LIST]);
 
 const validData = {
   name: 'Ada',
-  age: 25,
+  age: '25',
   email: 'ada@example.com',
   gender: 'female' as const,
   password: 'Aa1!bbbb',
@@ -21,6 +21,9 @@ describe('createFormSchema', () => {
   it('accepts valid form data', () => {
     const result = schema.safeParse(validData);
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.age).toBe(25);
+    }
   });
 
   it('rejects name without uppercase first letter', () => {
@@ -31,8 +34,21 @@ describe('createFormSchema', () => {
     }
   });
 
+  it('rejects empty age', () => {
+    const result = schema.safeParse({ ...validData, age: '' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.some((i) => i.path[0] === 'age')).toBe(true);
+    }
+  });
+
+  it('rejects non-numeric age', () => {
+    const result = schema.safeParse({ ...validData, age: 'abc' });
+    expect(result.success).toBe(false);
+  });
+
   it('rejects negative age', () => {
-    const result = schema.safeParse({ ...validData, age: -1 });
+    const result = schema.safeParse({ ...validData, age: '-1' });
     expect(result.success).toBe(false);
   });
 
@@ -91,11 +107,6 @@ describe('createFormSchema', () => {
 
   it('rejects missing image', () => {
     const result = schema.safeParse({ ...validData, image: null });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects NaN age', () => {
-    const result = schema.safeParse({ ...validData, age: Number.NaN });
     expect(result.success).toBe(false);
   });
 
