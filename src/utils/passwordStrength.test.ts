@@ -31,4 +31,16 @@ describe('getPasswordStrength', () => {
     expect(result.score).toBe(2);
     expect(result.label).toBe('fair');
   });
+
+  it('counts cyrillic uppercase and lowercase letters', () => {
+    const result = getPasswordStrength('Пароль1!');
+    expect(result.checks).toEqual({
+      hasNumber: true,
+      hasUppercase: true,
+      hasLowercase: true,
+      hasSpecial: true,
+    });
+    expect(result.score).toBe(4);
+    expect(result.label).toBe('strong');
+  });
 });
