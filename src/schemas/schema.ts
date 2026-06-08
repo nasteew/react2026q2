@@ -1,5 +1,11 @@
 import { z } from 'zod';
 import { validateCountry } from '@/utils/validateCountry';
+import {
+  passwordHasLowercase,
+  passwordHasNumber,
+  passwordHasSpecial,
+  passwordHasUppercase,
+} from '@/utils/passwordStrength';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
@@ -102,17 +108,17 @@ export function createFormSchema(countries: string[]) {
       password: z
         .string()
         .min(8, 'Password must be at least 8 characters')
-        .refine((val) => /[0-9]/.test(val), 'Must contain at least 1 number')
+        .refine(passwordHasNumber, 'Must contain at least 1 number')
         .refine(
-          (val) => /[A-Z]/.test(val),
+          passwordHasUppercase,
           'Must contain at least 1 uppercase letter'
         )
         .refine(
-          (val) => /[a-z]/.test(val),
+          passwordHasLowercase,
           'Must contain at least 1 lowercase letter'
         )
         .refine(
-          (val) => /[^A-Za-z0-9]/.test(val),
+          passwordHasSpecial,
           'Must contain at least 1 special character'
         ),
 

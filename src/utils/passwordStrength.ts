@@ -9,12 +9,23 @@ export interface PasswordStrength {
   };
 }
 
+export const passwordHasNumber = (password: string) => /[0-9]/.test(password);
+
+export const passwordHasUppercase = (password: string) =>
+  /\p{Lu}/u.test(password);
+
+export const passwordHasLowercase = (password: string) =>
+  /\p{Ll}/u.test(password);
+
+export const passwordHasSpecial = (password: string) =>
+  /[^\p{L}\p{N}]/u.test(password);
+
 export function getPasswordStrength(password: string): PasswordStrength {
   const checks = {
-    hasNumber: /[0-9]/.test(password),
-    hasUppercase: /[A-Z]/.test(password),
-    hasLowercase: /[a-z]/.test(password),
-    hasSpecial: /[^A-Za-z0-9]/.test(password),
+    hasNumber: passwordHasNumber(password),
+    hasUppercase: passwordHasUppercase(password),
+    hasLowercase: passwordHasLowercase(password),
+    hasSpecial: passwordHasSpecial(password),
   };
 
   const score = Object.values(checks).filter(Boolean).length;
