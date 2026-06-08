@@ -28,6 +28,7 @@ export function RHFForm({ onClose }: Props): JSX.Element {
     register,
     handleSubmit,
     control,
+    trigger,
     formState: { errors, isValid },
     reset,
   } = useForm({
@@ -119,7 +120,9 @@ export function RHFForm({ onClose }: Props): JSX.Element {
         label="Password"
         placeholder="••••••••"
         error={errors.password?.message}
-        {...register('password')}
+        {...register('password', {
+          onChange: () => trigger('confirmPassword'),
+        })}
       />
 
       <PasswordStrength strength={strength} />
