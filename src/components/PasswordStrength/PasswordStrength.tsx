@@ -36,28 +36,28 @@ export function PasswordStrength({
             safe.checks.hasNumber ? 'text-emerald-400' : 'text-white/30'
           }
         >
-          123 number
+          1 number
         </span>
         <span
           className={
             safe.checks.hasUppercase ? 'text-emerald-400' : 'text-white/30'
           }
         >
-          ABC uppercase
+          1 uppercase
         </span>
         <span
           className={
             safe.checks.hasLowercase ? 'text-emerald-400' : 'text-white/30'
           }
         >
-          abc lowercase
+          1 lowercase
         </span>
         <span
           className={
             safe.checks.hasSpecial ? 'text-emerald-400' : 'text-white/30'
           }
         >
-          !@# special
+          1 special character
         </span>
       </div>
     </div>
