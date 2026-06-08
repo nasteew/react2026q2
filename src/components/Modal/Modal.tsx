@@ -84,15 +84,12 @@ export function Modal({
         event.preventDefault();
         handleClose();
       }}
+      onClick={(e) => {
+        if (e.target === dialogRef.current) {
+          handleClose();
+        }
+      }}
     >
-      <button
-        type="button"
-        aria-label="Close modal backdrop"
-        className="absolute inset-0 cursor-default bg-transparent"
-        onClick={handleClose}
-        tabIndex={-1}
-      />
-
       <div className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-white/[0.07] bg-[#111111] p-0 shadow-[0_32px_80px_rgba(0,0,0,0.7)] outline-none">
         <span
           ref={trapStartRef}
