@@ -103,7 +103,6 @@ describe('Modal', () => {
 
   it('calls onClose when clicking the backdrop', async () => {
     const onClose = vi.fn();
-    const user = userEvent.setup();
 
     render(
       <Modal isOpen title="Test Modal" onClose={onClose}>
@@ -111,9 +110,8 @@ describe('Modal', () => {
       </Modal>
     );
 
-    await user.click(
-      await screen.findByRole('button', { name: 'Close modal backdrop' })
-    );
+    const dialog = await screen.findByRole('dialog');
+    fireEvent.click(dialog);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
