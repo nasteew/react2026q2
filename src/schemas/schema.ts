@@ -110,7 +110,7 @@ export function createFormSchema(countries: string[]) {
         .string()
         .min(1, 'Name is required')
         .refine(
-          (val) => val.length > 0 && val[0] === val[0].toUpperCase(),
+          (val) => val.length > 0 && /\p{Lu}/u.test(val[0]),
           'First letter must be uppercase'
         ),
 
