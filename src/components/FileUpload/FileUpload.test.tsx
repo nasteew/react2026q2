@@ -23,6 +23,19 @@ describe('FileUpload', () => {
     expect(onChange).toHaveBeenCalled();
   });
 
+  it('shows selected file name', async () => {
+    const user = userEvent.setup();
+
+    render(<FileUpload id="photo" name="image" />);
+
+    await user.upload(
+      screen.getByLabelText('Photo'),
+      createImageFile('avatar.png')
+    );
+
+    expect(screen.getByText('avatar.png')).toBeInTheDocument();
+  });
+
   it('shows error message', () => {
     render(<FileUpload id="photo" name="image" error="Image is required" />);
 
