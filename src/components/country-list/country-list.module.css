@@ -1,3 +1,14 @@
 .countryList {
   padding: 16px;
 }
+
+.listInner {
+  position: relative;
+}
+
+.listItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
