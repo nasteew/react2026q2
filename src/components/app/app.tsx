@@ -21,7 +21,6 @@ type AppState = {
 
 export const App = () => {
   const { data, isLoading, error } = useCo2Data();
-
   const [state, setState] = useState<AppState>({
     searchQuery: '',
     selectedRegion: '',
@@ -118,7 +117,6 @@ export const App = () => {
         selectedYear={state.selectedYear}
         sortField={state.sortField}
         sortOrder={state.sortOrder}
-        onYearChange={handleYearChange}
       />
 
       <ColumnModal
