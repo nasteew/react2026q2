@@ -1,10 +1,9 @@
-import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useMemo, useRef } from 'react';
 import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
-import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
 
 import styles from './country-list.module.css';
-import { useMemo } from 'react';
 
 type CountryListProps = {
   countries: Country[];
@@ -14,7 +13,6 @@ type CountryListProps = {
   selectedYear: number;
   sortField: 'name' | 'population';
   sortOrder: 'asc' | 'desc';
-  onYearChange: (year: number) => void;
 };
 
 export const CountryList = ({
@@ -26,36 +24,52 @@ export const CountryList = ({
   sortField,
   sortOrder,
 }: CountryListProps) => {
+  const parentRef = useRef<HTMLDivElement>(null);
+
   const filteredCountries = useMemo(() => {
-    return countries
-      .filter((c) => {
-        const matchesSearch = c.id.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesRegion = !selectedRegion || c.data.some((d) => d.region === selectedRegion);
-        return matchesSearch && matchesRegion;
-      })
-      .sort((a, b) => {
-        if (sortField === 'name') {
-          return sortOrder === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
-        } else {
-          const popA = getPopulationForYear(createYearDataMap(a.data), selectedYear) || 0;
-          const popB = getPopulationForYear(createYearDataMap(b.data), selectedYear) || 0;
-          return sortOrder === 'asc' ? popA - popB : popB - popA;
-        }
+    const lowerSearch = searchQuery.toLowerCase();
+
+    const filtered = countries.filter((c) => {
+      const matchesSearch = c.id.toLowerCase().includes(lowerSearch);
+      const matchesRegion = !selectedRegion || c.data.some((d) => d.region === selectedRegion);
+
+      return matchesSearch && matchesRegion;
+    });
+
+    if (sortField === 'population') {
+      const popMap = new Map<string, number>();
+
+      for (const c of filtered) {
+        const yearData = c.data.find((d) => d.year === selectedYear);
+        popMap.set(c.id, yearData?.population || 0);
+      }
+
+      filtered.sort((a, b) => {
+        const popA = popMap.get(a.id)!;
+        const popB = popMap.get(b.id)!;
+        return sortOrder === 'asc' ? popA - popB : popB - popA;
       });
+
+      return filtered;
+    }
+
+    filtered.sort((a, b) =>
+      sortOrder === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id)
+    );
+
+    return filtered;
   }, [countries, searchQuery, selectedRegion, selectedYear, sortField, sortOrder]);
 
-  const virtualizer = useWindowVirtualizer({
+  const virtualizer = useVirtualizer({
     count: filteredCountries.length,
+    getScrollElement: () => parentRef.current,
     estimateSize: () => 220,
-    overscan: 5,
+    overscan: 1,
   });
 
   return (
-    <div className={styles.countryList}>
-      <div
-        className={styles.listInner}
-        style={{ height: virtualizer.getTotalSize(), position: 'relative' }}
-      >
+    <div ref={parentRef} className={styles.countryList} style={{ height: 600, overflow: 'auto' }}>
+      <div className={styles.listInner} style={{ height: virtualizer.getTotalSize() }}>
         {virtualizer.getVirtualItems().map((item) => {
           const country = filteredCountries[item.index];
 

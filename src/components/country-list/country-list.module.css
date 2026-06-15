@@ -1,9 +1,13 @@
 .countryList {
+  height: 517px;
+  overflow: auto;
+  position: relative;
   padding: 16px;
 }
 
 .listInner {
   position: relative;
+  width: 100%;
 }
 
 .listItem {
@@ -11,4 +15,5 @@
   top: 0;
   left: 0;
   width: 100%;
+  will-change: transform;
 }
