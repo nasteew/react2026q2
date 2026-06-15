@@ -64,11 +64,11 @@ export const CountryList = ({
     count: filteredCountries.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 220,
-    overscan: 1,
+    overscan: 3,
   });
 
   return (
-    <div ref={parentRef} className={styles.countryList} style={{ height: 600, overflow: 'auto' }}>
+    <div ref={parentRef} className={styles.countryList}>
       <div className={styles.listInner} style={{ height: virtualizer.getTotalSize() }}>
         {virtualizer.getVirtualItems().map((item) => {
           const country = filteredCountries[item.index];
