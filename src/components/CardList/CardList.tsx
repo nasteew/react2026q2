@@ -3,11 +3,12 @@ import Card from './Card';
 
 interface Props {
   items: Item[];
-  onCardClick: (id: number) => void;
+  search: string;
+  page: string;
   isDetailOpen?: boolean;
 }
 
-const CardList = ({ items, onCardClick, isDetailOpen }: Props) => {
+export default function CardList({ items, search, page, isDetailOpen }: Props) {
   return (
     <div
       role="grid"
@@ -18,10 +19,8 @@ const CardList = ({ items, onCardClick, isDetailOpen }: Props) => {
       }`}
     >
       {items.map((item) => (
-        <Card key={item.name} item={item} onClick={onCardClick} />
+        <Card key={item.id} item={item} search={search} page={page} />
       ))}
     </div>
   );
-};
-
-export default CardList;
+}
