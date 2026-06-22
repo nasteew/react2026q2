@@ -10,7 +10,7 @@ function ErrorButton() {
   const t = useTranslations('errors');
 
   if (shouldThrow) {
-    throw new Error('Simulated error from ErrorButton');
+    throw new Error('Test error from ErrorButton');
   }
 
   return (
