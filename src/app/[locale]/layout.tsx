@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { ThemeProvider } from '@/context/ThemeContext';
 import '../globals.css';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 interface Props {
   children: ReactNode;
@@ -18,7 +18,7 @@ export default async function Layout({ children, params }: Props) {
   }
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/Poké_Ball_icon.svg.png" />
         <title>Pokémon</title>
