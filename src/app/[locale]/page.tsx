@@ -57,7 +57,10 @@ export default async function HomePage({ params, searchParams }: PageProps) {
                 shadow-2xl rounded-2xl
               "
             >
-              <Suspense key={`details-${details}`} fallback={<Loader />}>
+              <Suspense
+                key={`details-${locale}-${details}`}
+                fallback={<Loader />}
+              >
                 <PokemonDetails id={details} search={search} page={page} />
               </Suspense>
             </div>

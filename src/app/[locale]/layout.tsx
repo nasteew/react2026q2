@@ -37,6 +37,8 @@ export default async function Layout({ children, params }: Props) {
     notFound();
   }
 
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
+
   return (
     <html lang={locale}>
       <head>
@@ -44,7 +46,7 @@ export default async function Layout({ children, params }: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <NextIntlClientProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
             <div id="root">{children}</div>
           </ThemeProvider>
