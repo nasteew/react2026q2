@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "about": "О приложении",
+    "backToApp": "Назад в приложение"
+  },
+  "search": {
+    "placeholder": "Введите имя покемона...",
+    "submit": "Поиск"
+  },
+  "pagination": {
+    "previous": "Предыдущая страница",
+    "next": "Следующая страница"
+  },
+  "about": {
+    "title": "О приложении",
+    "authorLabel": "Автор",
+    "authorName": "Анастасия Смолер",
+    "authorRole": "Frontend-разработчик · Студент RS School 2026",
+    "appLabel": "О приложении",
+    "appDescription": "Приложение на React, TypeScript и Next.js. Ищите любимых покемонов и изучайте их характеристики, способности и приёмы.",
+    "courseLink": "RS School · Курс React"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "back": "Назад в приложение"
+  },
+  "flyout": {
+    "selected": "Выбрано",
+    "item": "элемент",
+    "items": "элементов",
+    "ready": "Готово к скачиванию",
+    "clearAll": "Очистить всё ✕",
+    "download": "Скачать ↓"
+  },
+  "errors": {
+    "retry": "Повторить",
+    "triggerError": "Вызвать ошибку",
+    "somethingWrong": "Не удалось загрузить покемонов.",
+    "badRequest": "Проверьте введённые данные и попробуйте снова.",
+    "notFoundItem": "Покемон не найден. Попробуйте другое имя!"
+  },
+  "refresh": {
+    "refresh": "Обновить",
+    "refreshing": "Обновление…"
+  }
+}
