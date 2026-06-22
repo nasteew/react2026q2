@@ -9,7 +9,8 @@ import { ERROR_CODES } from '@/constants/errors';
 export async function fetchPokemon(name: string): Promise<Item> {
   try {
     const data = await request<PokemonResponse>(
-      `${BASE_URL}/${name.toLowerCase()}`
+      `${BASE_URL}/${name.toLowerCase()}`,
+      { tag: `pokemon-${name.toLowerCase()}` }
     );
     return {
       id: data.id,
@@ -47,7 +48,8 @@ export async function fetchPokemonList(
     const limit = 12;
     const offset = (page - 1) * limit;
     const data = await request<{ results: PokemonListItem[]; count: number }>(
-      `${BASE_URL}?limit=${limit}&offset=${offset}`
+      `${BASE_URL}?limit=${limit}&offset=${offset}`,
+      { tag: `pokemon-list-${page}` }
     );
     const items = await Promise.all(
       data.results.map((pokemon) => fetchPokemon(pokemon.name))

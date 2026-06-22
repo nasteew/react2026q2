@@ -12,7 +12,10 @@ interface Props {
 
 export default function SearchForm({ defaultValue }: Props) {
   const t = useTranslations('search');
-  const [, setStoredSearch] = useLocalStorage('searchTerm', defaultValue);
+  const [storedSearch, setStoredSearch] = useLocalStorage(
+    'searchTerm',
+    defaultValue
+  );
 
   return (
     <form
@@ -35,7 +38,7 @@ export default function SearchForm({ defaultValue }: Props) {
         <input
           type="text"
           name="search"
-          defaultValue={defaultValue}
+          defaultValue={storedSearch}
           className="
             w-full border-2 border-black rounded-md px-3 py-2 pl-12
             bg-white dark:bg-gray-800

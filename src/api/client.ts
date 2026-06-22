@@ -4,11 +4,12 @@ const TTL = Number(process.env.NEXT_PUBLIC_CACHE_TTL) || 120;
 
 export async function request<T>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit & { tag?: string }
 ): Promise<T> {
   const response = await fetch(url, {
     ...options,
     next: { revalidate: TTL },
+    tags: options?.tag ? [options.tag] : undefined,
   } as RequestInit);
 
   if (!response.ok) {

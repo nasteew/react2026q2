@@ -2,22 +2,26 @@
 
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
-import { refreshList } from '@/actions/refresh';
+import { refreshDetails } from '@/actions/refresh';
 import Button from '../ui/Button/Button';
 
 interface Props {
-  page: number;
+  pokemonId: string;
 }
 
-export function RefreshButton({ page }: Props) {
+export function DetailsRefreshButton({ pokemonId }: Props) {
   const [isPending, startTransition] = useTransition();
   const t = useTranslations('refresh');
+
+  const handleRefresh = () => {
+    startTransition(() => refreshDetails(pokemonId));
+  };
 
   return (
     <Button
       label={isPending ? t('refreshing') : t('refresh')}
-      onClick={() => startTransition(() => refreshList(page))}
-      className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition mb-3"
+      onClick={handleRefresh}
+      className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 transition"
     />
   );
 }

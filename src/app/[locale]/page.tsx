@@ -32,7 +32,7 @@ export default async function HomePage({ params, searchParams }: PageProps) {
           isDetailOpen ? '' : 'max-w-5xl mx-auto'
         }`}
       >
-        <RefreshButton locale={locale} />
+        <RefreshButton page={Number(page)} />
         <div className="flex gap-4 items-start">
           <CloseDetailOnClick
             isDetailOpen={isDetailOpen}

@@ -1,7 +1,11 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
-export async function refreshList(locale: string) {
-  revalidatePath(`/${locale}`);
+export async function refreshDetails(name: string) {
+  revalidateTag(`pokemon-${name.toLowerCase()}`, 'max');
+}
+
+export async function refreshList(page: number) {
+  revalidateTag(`pokemon-list-${page}`, 'max');
 }

@@ -6,6 +6,7 @@ import { typeStyles } from '@/constants/typeStyles';
 import Pokeball from '@/components/ui/icons/Pokeball';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import { DetailsRefreshButton } from '@/components/RefreshButton/DetailsRefreshButton';
 
 interface Props {
   id: string;
@@ -55,10 +56,12 @@ export default async function PokemonDetails({ id, search, page }: Props) {
         shadow-lg transition-colors duration-300
       `}
     >
-      <Link
-        href={{ pathname: '/', query: closeQuery }}
-        className={`
-    absolute top-3 right-3 z-30 cursor-pointer inline-flex items-center justify-center
+      <div className="absolute top-3 right-3 z-30 flex gap-2">
+        <DetailsRefreshButton pokemonId={id} />
+        <Link
+          href={{ pathname: '/', query: closeQuery }}
+          className={`
+    cursor-pointer inline-flex items-center justify-center
     font-semibold rounded-xl border-2 border-black shadow-lg
     active:scale-95 transform transition-transform duration-150 ease-out
     hover:scale-105 hover:shadow-lg
@@ -67,9 +70,10 @@ export default async function PokemonDetails({ id, search, page }: Props) {
     bg-red-700 dark:bg-red-900 text-white
     px-3 py-2
   `}
-      >
-        ✕
-      </Link>
+        >
+          ✕
+        </Link>
+      </div>
       <div
         className={`relative h-60 flex items-center justify-center ${gradient}`}
       >
