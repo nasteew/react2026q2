@@ -1,29 +1,39 @@
-import Button from '../ui/Button/Button';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 
-interface PaginationProps {
+interface Props {
   page: number;
   totalPages: number;
-  onChange: (page: number) => void;
+  search: string;
 }
 
-function Pagination({ page, totalPages, onChange }: PaginationProps) {
+function queryFor(page: number, search: string): Record<string, string> {
+  const query: Record<string, string> = { page: String(page) };
+  if (search) query.search = search;
+  return query;
+}
+
+export default async function Pagination({ page, totalPages, search }: Props) {
+  const t = await getTranslations('pagination');
+  const isFirstPage = page <= 1;
   const isLastPage = page >= totalPages;
 
   return (
     <div className="flex justify-center gap-4 mt-6 items-center">
-      <Button
-        onClick={() => page > 1 && onChange(page - 1)}
-        label="<"
-        ariaLabel="Previous page"
-        disabled={page === 1}
-        className="
+      <Link
+        href={{ pathname: '/', query: queryFor(Math.max(1, page - 1), search) }}
+        aria-label={t('previous')}
+        aria-disabled={isFirstPage}
+        className={`
           bg-red-700 dark:bg-red-900 text-white px-3 py-2 text-sm
-          border-2 border-black shadow-md
+          border-2 border-black shadow-md rounded-lg
+          inline-flex items-center justify-center
           hover:scale-105 active:scale-95
-          disabled:opacity-50 disabled:cursor-not-allowed
-        "
-        type="button"
-      />
+          ${isFirstPage ? 'opacity-50 pointer-events-none' : ''}
+        `}
+      >
+        {'<'}
+      </Link>
 
       <span
         className="
@@ -37,21 +47,20 @@ function Pagination({ page, totalPages, onChange }: PaginationProps) {
         {page} / {totalPages}
       </span>
 
-      <Button
-        onClick={() => !isLastPage && onChange(page + 1)}
-        label=">"
-        ariaLabel="Next page"
-        disabled={isLastPage}
-        className="
+      <Link
+        href={{ pathname: '/', query: queryFor(page + 1, search) }}
+        aria-label={t('next')}
+        aria-disabled={isLastPage}
+        className={`
           bg-red-700 dark:bg-red-900 text-white px-3 py-2 text-sm
-          border-2 border-black shadow-md
+          border-2 border-black shadow-md rounded-lg
+          inline-flex items-center justify-center
           hover:scale-105 active:scale-95
-          disabled:opacity-50 disabled:cursor-not-allowed
-        "
-        type="button"
-      />
+          ${isLastPage ? 'opacity-50 pointer-events-none' : ''}
+        `}
+      >
+        {'>'}
+      </Link>
     </div>
   );
 }
-
-export default Pagination;

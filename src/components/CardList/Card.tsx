@@ -1,3 +1,7 @@
+'use client';
+
+import Image from 'next/image';
+import { Link } from '@/i18n/navigation';
 import type { Item } from '@/types/item';
 import Pokeball from '../ui/icons/Pokeball';
 import { typeStyles } from '@/constants/typeStyles';
@@ -5,15 +9,14 @@ import { useSelectedItemsStore } from '@/store/store';
 
 interface Props {
   item: Item;
-  onClick: (name: number) => void;
+  search: string;
+  page: string;
 }
 
-const Card = ({ item, onClick }: Props) => {
+const Card = ({ item, search, page }: Props) => {
   const types = item.types;
-
   const primary = typeStyles[types[0]] || typeStyles.default;
   const secondary = typeStyles[types[1]] || primary;
-
   const gradient = `bg-gradient-to-br ${primary.from} ${secondary.to}`;
 
   const toggleItem = useSelectedItemsStore((state) => state.toggleItem);
@@ -21,17 +24,23 @@ const Card = ({ item, onClick }: Props) => {
     state.items.some((i) => i.id === String(item.id))
   );
 
+  const detailsQuery: Record<string, string> = {
+    page,
+    details: String(item.id),
+  };
+  if (search) detailsQuery.search = search;
+
   return (
-    <article
+    <Link
+      href={{ pathname: '/', query: detailsQuery }}
       className={`
-        group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden relative
+        group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden relative
         border-2 border-black ${primary.border}
         shadow-sm
         transition-all duration-300
         hover:shadow-lg hover:-translate-y-1
         cursor-pointer
       `}
-      onClick={() => onClick(item.id)}
       data-testid={`card-${item.id}`}
     >
       <div
@@ -43,7 +52,8 @@ const Card = ({ item, onClick }: Props) => {
           <input
             type="checkbox"
             checked={isChecked}
-            onChange={() =>
+            onChange={(e) => {
+              e.stopPropagation();
               toggleItem({
                 id: String(item.id),
                 name: item.name,
@@ -53,8 +63,8 @@ const Card = ({ item, onClick }: Props) => {
                 abilities: item.abilities.join(' | '),
                 baseExperience: item.baseExperience,
                 url: item.image,
-              })
-            }
+              });
+            }}
             data-testid={`checkbox-input-${item.id}`}
             className="sr-only"
           />
@@ -94,21 +104,22 @@ const Card = ({ item, onClick }: Props) => {
       >
         <div className="absolute inset-0 bg-black/6 pointer-events-none" />
 
-        <div className="relative z-10 w-full h-full flex items-center justify-center">
-          {item.image ? (
-            <img
-              src={item.image}
-              alt={item.name}
-              loading="lazy"
-              className="max-h-36 object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <Pokeball className="w-20 h-20 opacity-70" />
-          )}
-        </div>
+        {item.image ? (
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            sizes="(max-width: 768px) 50vw, 300px"
+            className="object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+            loading="eager"
+            priority
+          />
+        ) : (
+          <Pokeball className="relative z-10 w-20 h-20 opacity-70" />
+        )}
 
         <div className="absolute left-3 top-3 z-20 flex gap-2 flex-wrap">
-          {types.map((type) => {
+          {types.map((type: string) => {
             const style = typeStyles[type] || typeStyles.default;
             return (
               <div
@@ -153,7 +164,7 @@ const Card = ({ item, onClick }: Props) => {
           </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 };
 

@@ -1,10 +1,11 @@
 interface ButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   label: string;
   ariaLabel?: string;
   className?: string;
   type?: 'submit' | 'button' | 'reset';
   disabled?: boolean;
+  'data-testid'?: string;
 }
 
 function Button({
@@ -14,6 +15,7 @@ function Button({
   className,
   type = 'button',
   disabled = false,
+  'data-testid': testId,
 }: ButtonProps) {
   return (
     <button
@@ -28,6 +30,7 @@ function Button({
         motion-reduce:transition-none ${className}`}
       type={type}
       disabled={disabled}
+      data-testid={testId}
     >
       <span className="text-sm">{label}</span>
     </button>

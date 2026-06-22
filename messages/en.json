@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "about": "About",
+    "backToApp": "Back to App"
+  },
+  "search": {
+    "placeholder": "Enter Pokémon name...",
+    "submit": "Search"
+  },
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "about": {
+    "title": "About",
+    "authorLabel": "Author",
+    "authorName": "Anastasiya Smoler",
+    "authorRole": "Frontend developer · RS School Student 2026",
+    "appLabel": "About the app",
+    "appDescription": "App built with React, TypeScript and Next.js. Search for your favourite Pokémon and explore their stats, abilities and moves.",
+    "courseLink": "RS School · React Course"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to App"
+  },
+  "flyout": {
+    "selected": "Selected",
+    "item": "item",
+    "items": "items",
+    "ready": "Ready to download",
+    "clearAll": "Clear All ✕",
+    "download": "Download ↓"
+  },
+  "errors": {
+    "retry": "Retry",
+    "triggerError": "Trigger Error",
+    "somethingWrong": "Failed to load Pokémon.",
+    "badRequest": "Please check your input and try again.",
+    "notFoundItem": "Pokémon not found. Try a different name!"
+  },
+  "refresh": {
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…"
+  }
+}
