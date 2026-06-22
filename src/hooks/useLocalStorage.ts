@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 function useLocalStorage<T>(
@@ -5,8 +7,9 @@ function useLocalStorage<T>(
   initialValue: T
 ): [T, (val: T) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === 'undefined') return initialValue;
     try {
-      const item = localStorage.getItem(key);
+      const item = window.localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : initialValue;
     } catch {
       return initialValue;
@@ -15,12 +18,16 @@ function useLocalStorage<T>(
 
   const setValue = (value: T) => {
     setStoredValue(value);
-    localStorage.setItem(key, JSON.stringify(value));
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    }
   };
 
   const clearValue = () => {
     setStoredValue(initialValue);
-    localStorage.removeItem(key);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(key);
+    }
   };
 
   return [storedValue, setValue, clearValue];
