@@ -1,51 +1,24 @@
-import { useSelectedItemsStore } from '@/store/store';
+'use client';
+
 import { useRef } from 'react';
+import { useTranslations } from 'next-intl';
+import { useSelectedItemsStore } from '@/store/store';
 import Pokeball from '../ui/icons/Pokeball';
 import Button from '../ui/Button/Button';
 
 const Flyout = () => {
+  const t = useTranslations('flyout');
   const items = useSelectedItemsStore((state) => state.items);
   const unselectAll = useSelectedItemsStore((state) => state.unselectAll);
-  const anchorRef = useRef<HTMLAnchorElement>(null);
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDownload = () => {
-    const separator = ';';
-    const header = [
-      'id',
-      'name',
-      'types',
-      'height',
-      'weight',
-      'abilities',
-      'base_experience',
-      'url',
-    ].join(separator);
-
-    const rows = items.map((i) =>
-      [
-        i.id,
-        i.name,
-        i.types,
-        i.height,
-        i.weight,
-        i.abilities,
-        i.baseExperience,
-        i.url,
-      ]
-        .map((val) => `"${String(val).replace(/"/g, '""')}"`)
-        .join(separator)
-    );
-
-    const csv = '\uFEFF' + [header, ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    if (anchorRef.current) {
-      anchorRef.current.href = url;
-      anchorRef.current.download = `${items.length}_items.csv`;
-      anchorRef.current.click();
-      URL.revokeObjectURL(url);
+    if (inputRef.current) {
+      inputRef.current.value = JSON.stringify(items);
     }
+    formRef.current?.submit();
   };
 
   if (items.length === 0) return null;
@@ -59,7 +32,9 @@ const Flyout = () => {
   "
       data-testid="flyout"
     >
-      <a ref={anchorRef} className="hidden" aria-hidden="true" />
+      <form ref={formRef} action="/api/csv" method="POST" className="hidden">
+        <input ref={inputRef} type="hidden" name="items" />
+      </form>
 
       <div
         className="
@@ -83,15 +58,15 @@ const Flyout = () => {
 
         <div className="flex flex-col leading-tight text-wrap">
           <span className="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-100">
-            Selected{' '}
+            {t('selected')}{' '}
             <span className="text-red-500 dark:text-red-400">
               {items.length}{' '}
             </span>
-            {items.length === 1 ? 'item' : 'items'}
+            {items.length === 1 ? t('item') : t('items')}
           </span>
 
           <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
-            Ready to download
+            {t('ready')}
           </span>
         </div>
 
@@ -109,7 +84,7 @@ const Flyout = () => {
         whitespace-nowrap shadow-sm transition
       "
           data-testid="unselect-all"
-          label="Clear All ✕"
+          label={t('clearAll')}
         />
 
         <Button
@@ -122,7 +97,7 @@ const Flyout = () => {
         text-xs sm:text-sm text-white whitespace-nowrap shadow-sm transition
       "
           data-testid="download"
-          label="Download ↓"
+          label={t('download')}
         />
       </div>
     </div>
