@@ -49,22 +49,23 @@ export default async function HomePage({ params, searchParams }: PageProps) {
             </Suspense>
           </CloseDetailOnClick>
 
-          {isDetailOpen && details && (
-            <div
-              className="
-                w-1/2 sticky top-4
-                max-h-[calc(100vh-6rem)] overflow-y-auto
-                shadow-2xl rounded-2xl
-              "
-            >
+          <div
+            className={`
+    sticky top-4
+    max-h-[calc(100vh-6rem)] overflow-y-auto
+    shadow-2xl rounded-2xl
+    ${isDetailOpen ? 'w-1/2' : 'w-0'}
+  `}
+          >
+            {isDetailOpen && details && (
               <Suspense
                 key={`details-${locale}-${details}`}
                 fallback={<Loader />}
               >
                 <PokemonDetails id={details} search={search} page={page} />
               </Suspense>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </main>
 
